@@ -141,14 +141,7 @@ public abstract class AbstractGeodataParser
         {
             for (int index = (offset + allocate - 1); index >= offset; index--)
             {
-                try
-                {
-                    buffer.put(inputArray[index]);
-                }
-                catch (Exception e)
-                {
-                    System.currentTimeMillis();
-                }
+                buffer.put(inputArray[index]);
             }
         }
         else

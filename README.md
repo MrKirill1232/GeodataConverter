@@ -1,7 +1,9 @@
 # GeodataConverter
 
 ДА! УТИЛИТА КОНВЕРТИРУЕТ L2D В ФОРМАТ L2J!
+
 !ТРЕБУЕТСЯ JDK 17!
+
 Для компиляции потребуется Apache Ant или можно скачать из релизов актуальную версию библиотеки.
 Чтоб пользоваться данной утилитой - требуется скачать проект, а так же библиотеку.
 Файл библиотеки хранится в *путь к проекту*/GeodataConvertor/libs/*актуальная версия*.jar
@@ -22,7 +24,9 @@ SAVE_FORMAT = l2j - выходной формат после конвертац�
 # GeodataConverter
 
 YES! UTILITY CONVERTS L2D TO L2J FORMAT!
+
 !REQUIRED JDK-17!
+
 For compilation you will need Apache Ant or you can download the current version of the library from releases.
 To use this utility - you need to download the project, as well as the library.
 Library file is stored in *path to project*/GeodataConvertor/libs/*actual version*.jar.

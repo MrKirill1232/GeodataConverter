@@ -32,8 +32,8 @@ public class GeodataConverter
         }
         System.out.println("Read format - " + read.name() + ";");
         System.out.println("Write format - " + write.name() + ";");
-        final File readPath = new File(MainConfig.PATH_TO_RUNNING, "dist/" + read.name().toLowerCase());
-        final File writePath = new File(MainConfig.PATH_TO_RUNNING, "dist/" + write.name().toLowerCase() + "_output");
+        final File readPath = new File(MainConfig.PATH_TO_RUNNING, "work/" + read.name().toLowerCase());
+        final File writePath = new File(MainConfig.PATH_TO_RUNNING, "work/" + write.name().toLowerCase() + "_output");
         parseGeoFiles(read, readPath, write, writePath);
     }
 
@@ -117,7 +117,7 @@ public class GeodataConverter
         }
         else
         {
-            AbstractGeodataParser dataOriginal = new L2DGeodataParser(new File(MainConfig.PATH_TO_RUNNING, "dist\\conv_dat\\" +"22_20.l2d"));
+            AbstractGeodataParser dataOriginal = new L2DGeodataParser(new File(MainConfig.PATH_TO_RUNNING, "work\\conv_dat\\" +"22_20.l2d"));
             // GeoRegion original = dataOriginal.read();
             AbstractGeodataParser dataReParsed = new L2DGeodataParser(new File(MainConfig.PATH_TO_RUNNING, "22_20.l2d"));
             // GeoRegion reparsed = dataReParsed.read();

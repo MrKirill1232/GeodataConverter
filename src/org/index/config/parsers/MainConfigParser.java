@@ -18,7 +18,7 @@ public class MainConfigParser extends ConfigParser
     @Override
     public String getConfigPath()
     {
-        return "dist/config/Main.ini";
+        return "work/config/Main.ini";
     }
 
     @Override

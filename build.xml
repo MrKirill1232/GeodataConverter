@@ -1,4 +1,4 @@
-<project name="MyProject" default="dist" basedir=".">
+<project name="MyProject" default="remove_build_folder" basedir=".">
     <description>
         Geodata Converter build config
     </description>
@@ -33,7 +33,7 @@
         </jar>
     </target>
 
-    <target name="remove_build_folder">
+    <target name="remove_build_folder" depends="dist">
         <delete dir="${build}"/>
     </target>
 </project>

@@ -9,7 +9,6 @@ import org.index.enums.GeodataExtensions;
 import org.index.model.GeoRegion;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -85,19 +84,12 @@ public class GeodataConverter
     {
         if (!writePath.exists())
         {
-            try
-            {
-                writePath.createNewFile();
-            }
-            catch (IOException e)
-            {
-                throw new RuntimeException(e);
-            }
+            writePath.mkdir();
         }
         if (region != null)
         {
             final File file = new File(writePath, region.getX() + "_" + region.getY() + new String(write.getExtension()));
-            AbstractGeodataWriter writeClass = AbstractGeodataWriter.createNewInstance(region, write, writePath);
+            AbstractGeodataWriter writeClass = AbstractGeodataWriter.createNewInstance(region, write, file);
             if (writeClass == null)
             {
                 System.err.println("You select unsupported geodata write format... " + write.name() + "; Maybe it will be added in future!");

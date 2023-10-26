@@ -87,7 +87,7 @@ public abstract class AbstractGeodataParser
      */
     public boolean validGeoFile()
     {
-        if (getFileAsByteArray() == null)
+        if (getFileAsByteArray() == null || getFileAsByteArray().length == 0)
         {
             return false;
         }
@@ -141,7 +141,14 @@ public abstract class AbstractGeodataParser
         {
             for (int index = (offset + allocate - 1); index >= offset; index--)
             {
-                buffer.put(inputArray[index]);
+                try
+                {
+                    buffer.put(inputArray[index]);
+                }
+                catch (Exception e)
+                {
+                    System.currentTimeMillis();
+                }
             }
         }
         else

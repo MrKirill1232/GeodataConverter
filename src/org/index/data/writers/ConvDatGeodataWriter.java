@@ -34,7 +34,7 @@ public class ConvDatGeodataWriter extends AbstractGeodataWriter
         header.writeShort(128);
         header.writeShort(16);
         header.writeInt(getRegion().getCellCount());
-        header.writeInt(getRegion().getComplexUndMultilayerBlocks());
+        header.writeInt(getRegion().getFlatUndComplexBlocks());
         header.writeInt(getRegion().getFlatBlocks());
         buffer.writeBytes(header.getWrittenBytes());
         for (int blockX = 0; blockX < MainConfig.GEO_REGION_SIZE; blockX++)

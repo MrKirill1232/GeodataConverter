@@ -1,6 +1,7 @@
 package org.index.model;
 
 import org.index.config.configs.MainConfig;
+import org.index.enums.GeodataBlockTypes;
 import org.index.model.blocks.GeoBlock;
 
 /**
@@ -14,7 +15,7 @@ public class GeoRegion
     private final GeoBlock[][] _registeredBlocks;
 
     private int _flatBlocks = 0;
-    private int _complexUndMultilayerBlocks = 0;
+    private int _flatUndComplexBlocks = 0;
     private int _cellCount = 0;
 
     public GeoRegion(int x, int y)
@@ -27,21 +28,8 @@ public class GeoRegion
     public void addBlock(int blockX, int blockY, GeoBlock block)
     {
         _registeredBlocks[blockX][blockY] = block;
-        switch (block.getBlockType())
-        {
-            case FLAT:
-            {
-                _flatBlocks += 1;
-                _complexUndMultilayerBlocks += 1;
-                return;
-            }
-            case COMPLEX:
-            // case MULTILEVEL:
-            {
-                _complexUndMultilayerBlocks += 1;
-                return;
-            }
-        }
+        _flatBlocks += block.getBlockType().equals(GeodataBlockTypes.FLAT) ? 1 : 0;
+        _flatUndComplexBlocks += block.getBlockType().equals(GeodataBlockTypes.MULTILEVEL) ? 0 : 1;
     }
 
     public void addCellCount(int cellCount)
@@ -69,9 +57,9 @@ public class GeoRegion
         return _flatBlocks;
     }
 
-    public int getComplexUndMultilayerBlocks()
+    public int getFlatUndComplexBlocks()
     {
-        return _complexUndMultilayerBlocks;
+        return _flatUndComplexBlocks;
     }
 
     public int getCellCount()

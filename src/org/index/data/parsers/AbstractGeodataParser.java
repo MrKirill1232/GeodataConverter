@@ -47,6 +47,10 @@ public abstract class AbstractGeodataParser
             {
                 return new L2GGeodataParser(pathToFile);
             }
+            case L2M:
+            {
+                return new L2MGeodataParser(pathToFile);
+            }
             default:
             {
                 return null;

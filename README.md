@@ -40,6 +40,6 @@ Then run "start.bat" and the main project folder.
 
 Be sure to check that the source files are stored in the *project path*/GeodataConvertor/work/*READ_FORMAT* folder. Otherwise, nothing will happen.
 
-Theoretically it is possible to use on servers that do not use Acis geodig, the data was reduced to PTS format.
+Theoretically it is possible to use on servers that do not use Acis geo-engine, the data was reduced to PTS format.
 
 I will be glad to any help with export to l2d / l2g format and import to l2s format (in their case - requires additional information about the bound server).

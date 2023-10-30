@@ -20,7 +20,7 @@ import java.util.Arrays;
  */
 public class L2GGeodataParser extends AbstractGeodataParser
 {
-    private final static int CHECKSUMM = 0x814141AB;
+    public final static int CHECKSUMM = 0x814141AB;
     private int _checksumm;
 
     public L2GGeodataParser(File pathToFile)

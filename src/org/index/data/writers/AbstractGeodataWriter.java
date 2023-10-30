@@ -26,6 +26,10 @@ public abstract class AbstractGeodataWriter
             {
                 return new ConvDatGeodataWriter(region, pathToFile);
             }
+            case L2G:
+            {
+                return new L2GGeodataWriter(region, pathToFile);
+            }
             default:
             {
                 return null;

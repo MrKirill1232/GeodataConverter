@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 public enum GeodataExtensions
 {
     L2J(".l2j".getBytes(StandardCharsets.UTF_8), false, false),
-    CONV_DAT(".dat".getBytes(StandardCharsets.UTF_8), true, false),
+    CONV_DAT("_conv.dat".getBytes(StandardCharsets.UTF_8), true, false),
     L2D(".l2d".getBytes(StandardCharsets.UTF_8), false, false),
     L2S(".l2s".getBytes(StandardCharsets.UTF_8), false, true),
     L2G(".l2g".getBytes(StandardCharsets.UTF_8), false, true),

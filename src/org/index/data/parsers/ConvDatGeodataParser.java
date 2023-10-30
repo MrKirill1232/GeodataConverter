@@ -19,7 +19,7 @@ import java.util.Arrays;
  */
 public class ConvDatGeodataParser extends AbstractGeodataParser
 {
-    private final int[] _dummy = new int[7];
+    private int[] _header = null;
 
     public ConvDatGeodataParser(File pathToGeoFile)
     {
@@ -30,29 +30,43 @@ public class ConvDatGeodataParser extends AbstractGeodataParser
     public GeoRegion read()
     {
         final GeoRegion geoRegion = new GeoRegion(getXYcord()[0], getXYcord()[1]);
-        readHeader(geoRegion);
+        if (_header == null)
+        {
+            readHeader();
+        }
         readBlocks(geoRegion);
         return geoRegion;
     }
 
-    private void readHeader(GeoRegion geoRegion)
+    @Override
+    public boolean validGeoFile()
     {
-        final byte[] dummyData = new byte[18];
-        System.arraycopy(getFileAsByteArray(), 0, dummyData, 0, 18);
+        if (_header == null)
+        {
+            readHeader();
+        }
+        boolean xValidation = _header[0] >= MainConfig.MIN_X_COORDINATE && _header[0] <= MainConfig.MAX_X_COORDINATE;
+        boolean yValidation = _header[1] >= MainConfig.MIN_Y_COORDINATE && _header[1] <= MainConfig.MAX_Y_COORDINATE;
+        return xValidation && yValidation && super.validGeoFile();
+    }
+
+    private void readHeader()
+    {
+        _header = new int[7];
         // int xRegion
-        _dummy[0] = ByteBuffer.allocate(Byte.BYTES).put(dummyData[_pos.getAndAdd(Byte.BYTES)]).rewind().get();
+        _header[0] = ByteBuffer.allocate(Byte.BYTES).put(getFileAsByteArray()[_pos.getAndAdd(Byte.BYTES)]).rewind().get();
         // int yRegion
-        _dummy[1] = ByteBuffer.allocate(Byte.BYTES).put(dummyData[_pos.getAndAdd(Byte.BYTES)]).rewind().get();
+        _header[1] = ByteBuffer.allocate(Byte.BYTES).put(getFileAsByteArray()[_pos.getAndAdd(Byte.BYTES)]).rewind().get();
         // int dummy01
-        _dummy[2] = getBuffer(dummyData, Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();   // 128
+        _header[2] = getBuffer(getFileAsByteArray(), Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();   // 128
         // int dummy02
-        _dummy[3] = getBuffer(dummyData, Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();   // 16
+        _header[3] = getBuffer(getFileAsByteArray(), Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();   // 16
         // int cellCount
-        _dummy[4] = getBuffer(dummyData, Integer.BYTES, _pos.getAndAdd(Integer.BYTES), true).getInt();
+        _header[4] = getBuffer(getFileAsByteArray(), Integer.BYTES, _pos.getAndAdd(Integer.BYTES), true).getInt();
         // int simpleBlocks
-        _dummy[5] = getBuffer(dummyData, Integer.BYTES, _pos.getAndAdd(Integer.BYTES), true).getInt();
+        _header[5] = getBuffer(getFileAsByteArray(), Integer.BYTES, _pos.getAndAdd(Integer.BYTES), true).getInt();
         // int flatCount
-        _dummy[6] = getBuffer(dummyData, Integer.BYTES, _pos.getAndAdd(Integer.BYTES), true).getInt();
+        _header[6] = getBuffer(getFileAsByteArray(), Integer.BYTES, _pos.getAndAdd(Integer.BYTES), true).getInt();
     }
 
     @Override

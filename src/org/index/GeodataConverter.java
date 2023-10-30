@@ -16,9 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class GeodataConverter
 {
-    // private final GeoRegion[][] _parsedRegions = new GeoRegion[MainConfig.MAX_X_COORDINATE + 1][MainConfig.MAX_Y_COORDINATE + 1];
-
-    AtomicInteger counter = new AtomicInteger(0);
+    private final AtomicInteger counter = new AtomicInteger(0);
 
     public GeodataConverter()
     {
@@ -31,8 +29,8 @@ public class GeodataConverter
         }
         System.out.println("Read format - " + read.name() + ";");
         System.out.println("Write format - " + write.name() + ";");
-        final File readPath = new File(MainConfig.PATH_TO_RUNNING, "work/" + read.name().toLowerCase());
-        final File writePath = new File(MainConfig.PATH_TO_RUNNING, "work/" + write.name().toLowerCase() + "_output");
+        final File readPath = new File(MainConfig.PATH_TO_RUNNING, "work/" + "input");
+        final File writePath = new File(MainConfig.PATH_TO_RUNNING, "work/" + "output");
         parseGeoFiles(read, readPath, write, writePath);
     }
 
@@ -49,11 +47,13 @@ public class GeodataConverter
             System.out.println("Any files for read. Searching path " + readPath.toString() + ";");
             return;
         }
+        final String extension = new String(read.getExtension());
         for (File file : files)
         {
-            if (!file.getName().endsWith(new String(read.getExtension())))
+            if (!file.getName().endsWith(extension))
             {
-                System.err.println("Writing... " + 3 + ";");
+                counter.addAndGet(1);
+                System.err.println("Wrong file format " + file.getName() + "... Continue;");
                 continue;
             }
             AbstractGeodataParser parserClass = AbstractGeodataParser.createNewInstance(read, file);
@@ -75,7 +75,6 @@ public class GeodataConverter
             System.err.println("Reading... " + file.getName() + ";");
             GeoRegion region = parserClass.read();
             writeGeoFile(region, write, writePath);
-            // _parsedRegions[region.getX()][region.getY()] = region;
             System.err.println((int) ((double) counter.addAndGet(1) / (double) files.length * 100d) + "% / " + "100%");
         }
     }

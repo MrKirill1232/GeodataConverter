@@ -108,9 +108,9 @@ public class GeodataConverter
         }
         else
         {
-            AbstractGeodataParser dataOriginal = new L2DGeodataParser(new File(MainConfig.PATH_TO_RUNNING, "work\\conv_dat\\" +"22_20.l2d"));
+            AbstractGeodataParser dataOriginal = new L2DGeodataParser(new File(MainConfig.PATH_TO_RUNNING, "work\\conv_dat\\" +"18_20_conv.dat"));
             // GeoRegion original = dataOriginal.read();
-            AbstractGeodataParser dataReParsed = new L2DGeodataParser(new File(MainConfig.PATH_TO_RUNNING, "22_20.l2d"));
+            AbstractGeodataParser dataReParsed = new L2DGeodataParser(new File(MainConfig.PATH_TO_RUNNING, "work\\output\\" +"18_20_conv.dat"));
             // GeoRegion reparsed = dataReParsed.read();
 
             for (int index = 0; index < dataOriginal.getFileAsByteArray().length; index++)
@@ -118,7 +118,7 @@ public class GeodataConverter
                 if (dataOriginal.getFileAsByteArray()[index] != dataReParsed.getFileAsByteArray()[index])
                 {
                     System.err.println(index + " not match!" + "\n" + "original: " + dataOriginal.getFileAsByteArray()[index] + "\n" + "reparsed: " + dataReParsed.getFileAsByteArray()[index]);
-                    break;
+                    // break;
                 }
             }
         }

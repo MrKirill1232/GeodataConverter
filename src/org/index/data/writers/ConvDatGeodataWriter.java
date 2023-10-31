@@ -42,6 +42,11 @@ public class ConvDatGeodataWriter extends AbstractGeodataWriter
             for (int blockY = 0; blockY < MainConfig.GEO_REGION_SIZE; blockY++)
             {
                 GeoBlock block = getRegion().getBlocks()[blockX][blockY];
+                if (block.getBlockType() == null)
+                {
+                    buffer.writeBytes(storeFlatBlock(block));
+                    continue;
+                }
                 if (block.getBlockType().equals(GeodataBlockTypes.FLAT))
                 {
                     buffer.writeBytes(storeFlatBlock(block));
@@ -72,7 +77,7 @@ public class ConvDatGeodataWriter extends AbstractGeodataWriter
     {
         NetworkWriter writer = new NetworkWriter();
         writer.reverseBytes(true);
-        writer.writeShort((short) block.getBlockType().getConvDatType());
+        writer.writeShort((short) GeodataBlockTypes.FLAT.getConvDatType());
         final GeoMainCell cell = block.getCells()[0][0][0];
         writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getHeight(), cell.getNswe()));
         writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getHeight(), cell.getNswe()));
@@ -84,7 +89,7 @@ public class ConvDatGeodataWriter extends AbstractGeodataWriter
     {
         NetworkWriter writer = new NetworkWriter();
         writer.reverseBytes(true);
-        writer.writeShort(block.getBlockType().getConvDatType());
+        writer.writeShort((short) GeodataBlockTypes.COMPLEX.getConvDatType());
         for (int x = 0; x < 8; x++)
         {
             for (int y = 0; y < 8; y++)

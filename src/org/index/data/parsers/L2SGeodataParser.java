@@ -114,7 +114,7 @@ public class L2SGeodataParser extends AbstractGeodataParser
         short height = getBuffer(getFileAsByteArray(), Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();
         final GeoBlockFlat block = new GeoBlockFlat(geoRegion);
 
-        final GeoMainCell cell = new GeoMainCell(block, 0, 0, 1, height);
+        final GeoMainCell cell = new GeoMainCell(block, 0, 0, 1);
         cell.setHeight(GeoMainCell.decodeHeight(height));
         cell.setNswe(GeoMainCell.decodeNswe(height));
 
@@ -135,7 +135,7 @@ public class L2SGeodataParser extends AbstractGeodataParser
 
                 final short height = getBuffer(getFileAsByteArray(), Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();
 
-                final GeoMainCell cell = new GeoMainCell(block, x, y, 1, height);
+                final GeoMainCell cell = new GeoMainCell(block, x, y, 1);
                 cell.setHeight(GeoMainCell.decodeHeight(height));
                 cell.setNswe(GeoMainCell.decodeNswe(height));
 
@@ -161,7 +161,7 @@ public class L2SGeodataParser extends AbstractGeodataParser
                 {
                     final short height = getBuffer(getFileAsByteArray(), Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();
 
-                    final GeoMainCell cell = new GeoMainCell(block, x, y, index, height);
+                    final GeoMainCell cell = new GeoMainCell(block, x, y, index);
                     cell.setHeight(GeoMainCell.decodeHeight(height));
                     cell.setNswe(GeoMainCell.decodeNswe(height));
 

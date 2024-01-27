@@ -55,7 +55,7 @@ public abstract class AbstractGeodataParser
             {
                 return new RPGeodataParser(pathToFile);
             }
-            case PATCH_TXT:
+            case PATH_TXT:
             {
                 return new PatchTxtGeodataParser(pathToFile);
             }

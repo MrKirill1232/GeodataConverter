@@ -1,6 +1,7 @@
 package org.index.model;
 
 import org.index.config.configs.MainConfig;
+import org.index.enums.GeodataBlockTypes;
 import org.index.enums.GeodataCellDirectionFlag;
 import org.index.model.blocks.GeoBlock;
 
@@ -14,23 +15,32 @@ public class GeoMainCell
     private final GeoBlock _block;
     private final int[] _cordinates;
     private final int _layer;
-    private final short _heightMask;
     private short _height;
+    private Short _minHeight = null;
     private short _nswe;
     private int _encoded;
     private GeodataCellDirectionFlag _direction;
 
-    public GeoMainCell(GeoBlock block, int x, int y, int layer, short heightMask)
+    public GeoMainCell(GeoBlock block, int x, int y, int layer)
     {
         _block = block;
         _cordinates = new int[] {x, y};
         _layer = layer;
-        _heightMask = heightMask;
     }
 
     public void setHeight(int height)
     {
         _height = (short) height;
+    }
+
+    public void setMinHeight(int height)
+    {
+        _minHeight = (short) height;
+    }
+
+    public short getMinHeight()
+    {
+        return _minHeight == null ? _height : _minHeight;
     }
 
     public void setNswe(short nswe)
@@ -60,7 +70,7 @@ public class GeoMainCell
 
     public int getHeightMask()
     {
-        return _heightMask;
+        return _block == null || GeodataBlockTypes.FLAT.equals(_block.getBlockType()) ? _height | _nswe : encodeNsweAndHeightToMask(_height, _nswe);
     }
 
     public short getHeight()
@@ -71,16 +81,6 @@ public class GeoMainCell
     public short getNswe()
     {
         return _nswe;
-    }
-
-    public void setEncode()
-    {
-        _encoded = encodeNsweAndHeightToMask(_height, _nswe);
-    }
-
-    public int getEncoded()
-    {
-        return _encoded;
     }
 
     public GeoBlock getBlock()
@@ -105,7 +105,7 @@ public class GeoMainCell
 
     public static short decodeNswe(int height)
     {
-        return (short) ((short) height & GeodataCellDirectionFlag.NSWE_MASK);
+        return (short) ((short) height & (byte) GeodataCellDirectionFlag.NSWE_MASK);
     }
 
     public static int encodeNsweAndHeightToMask(short height, short nswe)
@@ -118,8 +118,8 @@ public class GeoMainCell
 //        return (short) ((int) (Integer.valueOf(binaryMaskValue, 2)));
 
         height <<= 1;
-        height &= HEIGHT_MASK;
-        height |= nswe;
+        height &= (short) HEIGHT_MASK;
+        height |= (byte) nswe;
         return height;
     }
 

@@ -1,6 +1,10 @@
 package org.index.data.parsers;
 
 import org.index.config.ConfigParser;
+import org.index.config.configs.MainConfig;
+import org.index.config.parsers.MainConfigParser;
+import org.index.data.writers.AbstractGeodataWriter;
+import org.index.data.writers.ConvDatGeodataWriter;
 import org.index.enums.GeodataBlockTypes;
 import org.index.enums.GeodataCellDirectionFlag;
 import org.index.enums.GeodataExtensions;
@@ -12,19 +16,32 @@ import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author Index
+ */
 public class PatchTxtGeodataParser extends AbstractGeodataParser
 {
     private final static Pattern PATTERN = Pattern.compile("\\[(\\d*),(\\d*)\\](\\d*)|\\(([0-9-:]*)\\)");
 
     public PatchTxtGeodataParser(File pathToGeoFile)
     {
-        super(GeodataExtensions.PATCH_TXT, pathToGeoFile);
+        super(GeodataExtensions.PATH_TXT, pathToGeoFile);
     }
 
     @Override
     protected byte[] readFileAsBytes()
     {
         return new byte[0];
+    }
+
+    @Override
+    public boolean validGeoFile()
+    {
+        int x = getXYcord()[0];
+        int y = getXYcord()[1];
+        return  x >= MainConfig.MIN_X_COORDINATE && x <= MainConfig.MAX_X_COORDINATE
+                &&
+                y >= MainConfig.MIN_Y_COORDINATE && y <= MainConfig.MAX_Y_COORDINATE;
     }
 
     @Override
@@ -116,7 +133,9 @@ public class PatchTxtGeodataParser extends AbstractGeodataParser
                         if (layers == 0)
                         {
                             rawBlock.extendLayers(cellX, cellY, 1);
-                            GeoMainCell cell = new GeoMainCell(rawBlock, cellX, cellY, 1, (short) GeoMainCell.encodeNsweAndHeightToMask((short) 0, GeodataCellDirectionFlag.NONE.getMask()));
+                            GeoMainCell cell = new GeoMainCell(rawBlock, cellX, cellY, 1);
+                            cell.setHeight(Short.MAX_VALUE / 2);
+                            cell.setNswe((short) 0);
                             rawBlock.addCell(cell);
                             continue;
                         }
@@ -130,7 +149,7 @@ public class PatchTxtGeodataParser extends AbstractGeodataParser
                             nswe = String.valueOf(heighAndNswe[1]).charAt(2) == '1' ? (short) (nswe | GeodataCellDirectionFlag.FLAG_S.getMask()) : nswe;
                             nswe = String.valueOf(heighAndNswe[1]).charAt(0) == '1' ? (short) (nswe | GeodataCellDirectionFlag.FLAG_E.getMask()) : nswe;
                             nswe = String.valueOf(heighAndNswe[1]).charAt(1) == '1' ? (short) (nswe | GeodataCellDirectionFlag.FLAG_W.getMask()) : nswe;
-                            GeoMainCell cell = new GeoMainCell(rawBlock, cellX, cellY, layer, (short) GeoMainCell.encodeNsweAndHeightToMask(height, nswe));
+                            GeoMainCell cell = new GeoMainCell(rawBlock, cellX, cellY, layer);
                             cell.setHeight(height);
                             cell.setNswe(nswe);
                             rawBlock.addCell(cell);
@@ -198,25 +217,26 @@ public class PatchTxtGeodataParser extends AbstractGeodataParser
         {
             return GeodataBlockTypes.MULTILEVEL;
         }
-        int maxHeight = Short.MIN_VALUE;
-        int height = geoBlockRaw.getCells()[0][0][0].getHeight();
+        boolean isAllNswe = true;
+        short maxHeight = Short.MIN_VALUE;
+        short minHeight = Short.MAX_VALUE;
         for (int cellX = 0; cellX < 8; cellX++)
         {
             for (int cellY = 0; cellY < 8; cellY++)
             {
                 GeoMainCell cell = geoBlockRaw.getCells()[cellX][cellY][0];
-                if (cell.getNswe() != GeodataCellDirectionFlag.NSWE_ALL.getMask() || Math.abs(cell.getHeight() - height) > 30)
-                {
-                    return GeodataBlockTypes.COMPLEX;
-                }
-                if (cell.getHeight() > maxHeight)
-                {
-                    maxHeight = cell.getHeight();
-                }
+                isAllNswe = isAllNswe && cell.getNswe() == GeodataCellDirectionFlag.NSWE_ALL.getMask();
+                maxHeight = cell.getHeight() > maxHeight ? cell.getHeight() : maxHeight;
+                minHeight = cell.getHeight() < minHeight ? cell.getHeight() : minHeight;
             }
         }
-        geoBlockRaw.getCells()[0][0][0].setHeight(maxHeight);
-        return GeodataBlockTypes.FLAT;
+        if (isAllNswe && (maxHeight == minHeight || Math.abs(maxHeight - minHeight) > (short) 32))
+        {
+            geoBlockRaw.getCells()[0][0][0].setHeight(maxHeight);
+            geoBlockRaw.getCells()[0][0][0].setMinHeight(minHeight);
+            return GeodataBlockTypes.FLAT;
+        }
+        return GeodataBlockTypes.COMPLEX;
     }
 
     @Override
@@ -238,9 +258,10 @@ public class PatchTxtGeodataParser extends AbstractGeodataParser
         final GeoBlockFlat block = new GeoBlockFlat(geoRegion);
 
 //        final GeoMainCell cell = new GeoMainCell(block, 0, 0, 1, (short) GeoMainCell.encodeNsweAndHeightToMask(rawCell.getHeight(), GeodataCellDirectionFlag.NSWE_ALL.getMask()));
-        final GeoMainCell cell = new GeoMainCell(block, 0, 0, 1, (short) (rawCell.getHeight() | GeodataCellDirectionFlag.NSWE_ALL.getMask()));
+        final GeoMainCell cell = new GeoMainCell(block, 0, 0, 1);
 //        cell.setHeight(rawCell.getHeight());
-        cell.setHeight(GeoMainCell.decodeHeight((short) cell.getHeightMask()));
+        cell.setHeight(rawCell.getHeight());
+        cell.setMinHeight(rawCell.getMinHeight());
         cell.setNswe(GeodataCellDirectionFlag.NSWE_ALL.getMask());
 
         block.addCell(cell);
@@ -266,9 +287,9 @@ public class PatchTxtGeodataParser extends AbstractGeodataParser
 
                 block.extendLayers(x, y, 1);
 
-                short height = (short) rawCell.getHeightMask();
+                short height = (short) GeoMainCell.encodeNsweAndHeightToMask(rawCell.getHeight(), rawCell.getNswe());
 
-                GeoMainCell cell = new GeoMainCell(block, x, y, 1, height);
+                GeoMainCell cell = new GeoMainCell(block, x, y, 1);
                 cell.setHeight(GeoMainCell.decodeHeight(height));
                 cell.setNswe(GeoMainCell.decodeNswe(height));
 
@@ -306,8 +327,8 @@ public class PatchTxtGeodataParser extends AbstractGeodataParser
 
                     GeoMainCell rawCell = layersOfRawCells[index];
 
-                    short height = (short) rawCell.getHeightMask();
-                    final GeoMainCell cell = new GeoMainCell(block, x, y, index, height);
+                    short height = (short) GeoMainCell.encodeNsweAndHeightToMask(rawCell.getHeight(), rawCell.getNswe());
+                    final GeoMainCell cell = new GeoMainCell(block, x, y, index);
                     cell.setHeight(GeoMainCell.decodeHeight(height));
                     cell.setNswe(GeoMainCell.decodeNswe(height));
 
@@ -344,5 +365,28 @@ public class PatchTxtGeodataParser extends AbstractGeodataParser
             heightAndNSWE[1] = match[1].substring(0, match[1].length() - 1);
         }
         return heightAndNSWE;
+    }
+
+
+    public static void main(String[] args)
+    {
+        MainConfigParser.getInstance().load();
+        File pathToHere;
+        try
+        {
+            pathToHere = new File("").getCanonicalFile();
+        }
+        catch (Exception e)
+        {
+            pathToHere = null;
+        }
+        PatchTxtGeodataParser data;
+        data = pathToHere == null
+                ? new PatchTxtGeodataParser(new File("work/path_txt/20_25_path.txt"))
+                : new PatchTxtGeodataParser(new File(pathToHere, "work/path_txt/20_25_path.txt"));
+
+        GeoRegion region = data.read();
+        AbstractGeodataWriter writer = new ConvDatGeodataWriter(region, new File(pathToHere, "work/" + "20_25" + "_conv.dat"));
+        writer.write();
     }
 }

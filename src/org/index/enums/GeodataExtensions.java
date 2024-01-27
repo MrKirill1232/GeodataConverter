@@ -13,7 +13,7 @@ public enum GeodataExtensions
     L2S(".l2s".getBytes(StandardCharsets.UTF_8), false, true),
     L2G(".l2g".getBytes(StandardCharsets.UTF_8), false, true),
     RP(".rp".getBytes(StandardCharsets.UTF_8), false, false),
-    PATCH_TXT(".txt".getBytes(StandardCharsets.UTF_8), false, false),
+    PATH_TXT(".txt".getBytes(StandardCharsets.UTF_8), false, false),
     L2M(".l2m".getBytes(StandardCharsets.UTF_8), false, false),
     ;
 

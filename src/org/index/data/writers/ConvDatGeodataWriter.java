@@ -74,8 +74,10 @@ public class ConvDatGeodataWriter extends AbstractGeodataWriter
         writer.reverseBytes(true);
         writer.writeShort((short) GeodataBlockTypes.FLAT.getConvDatType());
         final GeoMainCell cell = block.getCells()[0][0][0];
-        writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getHeight(), cell.getNswe()));
-        writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getHeight(), cell.getNswe()));
+//        writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getHeight(), cell.getNswe()));
+//        writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getMinHeight(), cell.getNswe()));
+        writer.writeShort(cell.getHeight() | cell.getNswe());
+        writer.writeShort(cell.getMinHeight() | cell.getNswe());
         return writer.getWrittenBytes();
     }
 

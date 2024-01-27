@@ -1,8 +1,6 @@
 package org.index.data.parsers;
 
 import org.index.config.configs.MainConfig;
-import org.index.config.parsers.MainConfigParser;
-import org.index.data.writers.ConvDatGeodataWriter;
 import org.index.enums.GeodataBlockTypes;
 import org.index.enums.GeodataExtensions;
 import org.index.model.GeoRegion;
@@ -123,7 +121,7 @@ public class ConvDatGeodataParser extends AbstractGeodataParser
 
         final GeoBlockFlat block = new GeoBlockFlat(geoRegion);
 
-        final GeoMainCell cell = new GeoMainCell(block, 0, 0, 1, height);
+        final GeoMainCell cell = new GeoMainCell(block, 0, 0, 1);
         cell.setHeight(GeoMainCell.decodeHeight(height));
         cell.setNswe(GeoMainCell.decodeNswe(height));
 
@@ -144,7 +142,7 @@ public class ConvDatGeodataParser extends AbstractGeodataParser
 
                 final short height = getBuffer(getFileAsByteArray(), Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();
 
-                GeoMainCell cell = new GeoMainCell(block, x, y, 1, height);
+                GeoMainCell cell = new GeoMainCell(block, x, y, 1);
                 cell.setHeight(GeoMainCell.decodeHeight(height));
                 cell.setNswe(GeoMainCell.decodeNswe(height));
 
@@ -174,7 +172,7 @@ public class ConvDatGeodataParser extends AbstractGeodataParser
                 {
                     final short height = getBuffer(getFileAsByteArray(), Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();
 
-                    final GeoMainCell cell = new GeoMainCell(block, x, y, index, height);
+                    final GeoMainCell cell = new GeoMainCell(block, x, y, index);
                     cell.setHeight(GeoMainCell.decodeHeight(height));
                     cell.setNswe(GeoMainCell.decodeNswe(height));
 
@@ -200,30 +198,5 @@ public class ConvDatGeodataParser extends AbstractGeodataParser
                             }
                        )
                 : _xycords;
-    }
-
-    public static void main(String[] args)
-    {
-        MainConfigParser.getInstance().load();
-        File pathToHere;
-        try
-        {
-            pathToHere = new File("").getCanonicalFile();
-        }
-        catch (Exception e)
-        {
-            pathToHere = null;
-        }
-
-        ConvDatGeodataParser data;
-        data = pathToHere == null
-                ? new ConvDatGeodataParser(new File("work/path_txt/25_15_conv.dat"))
-//                : new ConvDatGeodataParser(new File(pathToHere, "work/path_txt/25_15_conv.dat"));
-                : new ConvDatGeodataParser(new File("C:\\Users\\Sader\\Desktop\\25_15_conv.dat"));
-
-        GeoRegion region = data.read();
-
-        ConvDatGeodataWriter writer = new ConvDatGeodataWriter(region, new File("E:\\MrKirill1232\\CodeProjects\\GeodataConverter\\work\\25_15_re_conv.dat"));
-        writer.write();
     }
 }

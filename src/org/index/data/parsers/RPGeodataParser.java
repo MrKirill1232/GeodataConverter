@@ -83,7 +83,7 @@ public class RPGeodataParser extends AbstractGeodataParser
 
         final GeoBlockFlat block = new GeoBlockFlat(geoRegion);
 
-        final GeoMainCell cell = new GeoMainCell(block, 0, 0, 1, height);
+        final GeoMainCell cell = new GeoMainCell(block, 0, 0, 1);
         cell.setHeight(GeoMainCell.decodeHeight(height));
         cell.setNswe(GeoMainCell.decodeNswe(height));
 
@@ -105,7 +105,7 @@ public class RPGeodataParser extends AbstractGeodataParser
                 byte direction = getFileAsByteArray()[_pos.getAndAdd(Byte.BYTES)];
                 short height = getBuffer(getFileAsByteArray(), Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();
 
-                GeoMainCell cell = new GeoMainCell(block, x, y, 1, height);
+                GeoMainCell cell = new GeoMainCell(block, x, y, 1);
                 cell.setHeight(height);
                 cell.setNswe((short) (direction & 15));
                 block.addCell(cell);
@@ -130,7 +130,7 @@ public class RPGeodataParser extends AbstractGeodataParser
                 {
                     byte direction = getBuffer(getFileAsByteArray(), Byte.BYTES, _pos.getAndAdd(Byte.BYTES), true).get();
                     short height = getBuffer(getFileAsByteArray(), Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();
-                    GeoMainCell cell = new GeoMainCell(block, x, y, index, height);
+                    GeoMainCell cell = new GeoMainCell(block, x, y, index);
                     cell.setHeight(height);
                     cell.setNswe((short) (direction & 15));
                     block.addCell(cell);

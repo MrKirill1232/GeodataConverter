@@ -3,12 +3,12 @@ package org.index;
 import org.index.config.configs.MainConfig;
 import org.index.config.parsers.MainConfigParser;
 import org.index.data.parsers.AbstractGeodataParser;
-import org.index.data.parsers.ConvDatGeodataParser;
 import org.index.data.writers.AbstractGeodataWriter;
 import org.index.enums.GeodataExtensions;
 import org.index.model.GeoRegion;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -21,20 +21,20 @@ public class GeodataConverter
     public GeodataConverter()
     {
         GeodataExtensions read = MainConfig.PARSE_FORMAT;
-        GeodataExtensions write = MainConfig.WRITE_FORMAT;
-        if (read == null || write == null)
+        GeodataExtensions[] writes = MainConfig.WRITE_FORMAT;
+        if (read == null || writes == null)
         {
             System.err.println("Cannot run convertor because writer or reader is null.");
             return;
         }
         System.out.println("Read format - " + read.name() + ";");
-        System.out.println("Write format - " + write.name() + ";");
+        System.out.println("Write formats - " + Arrays.toString(writes) + ";");
         final File readPath = new File(MainConfig.PATH_TO_RUNNING, "work/" + "input");
         final File writePath = new File(MainConfig.PATH_TO_RUNNING, "work/" + "output");
-        parseGeoFiles(read, readPath, write, writePath);
+        parseGeoFiles(read, readPath, writes, writePath);
     }
 
-    private void parseGeoFiles(GeodataExtensions read, File readPath, GeodataExtensions write, File writePath)
+    private void parseGeoFiles(GeodataExtensions read, File readPath, GeodataExtensions[] writes, File writePath)
     {
         final File[] files = readPath.listFiles();
         if (files == null)
@@ -74,12 +74,12 @@ public class GeodataConverter
             }
             System.err.println("Reading... " + file.getName() + ";");
             GeoRegion region = parserClass.read();
-            writeGeoFile(region, write, writePath);
+            writeGeoFile(region, writes, writePath);
             System.err.println((int) ((double) counter.addAndGet(1) / (double) files.length * 100d) + "% / " + "100%");
         }
     }
 
-    private void writeGeoFile(GeoRegion region, GeodataExtensions write, File writePath)
+    private void writeGeoFile(GeoRegion region, GeodataExtensions[] writes, File writePath)
     {
         if (!writePath.exists())
         {
@@ -87,15 +87,18 @@ public class GeodataConverter
         }
         if (region != null)
         {
-            final File file = new File(writePath, region.getX() + "_" + region.getY() + new String(write.getExtension()));
-            AbstractGeodataWriter writeClass = AbstractGeodataWriter.createNewInstance(region, write, file);
-            if (writeClass == null)
+            for (GeodataExtensions write : writes)
             {
-                System.err.println("You select unsupported geodata write format... " + write.name() + "; Maybe it will be added in future!");
-                return;
+                final File file = new File(writePath, region.getX() + "_" + region.getY() + new String(write.getExtension()));
+                AbstractGeodataWriter writeClass = AbstractGeodataWriter.createNewInstance(region, write, file);
+                if (writeClass == null)
+                {
+                    System.err.println("You select unsupported geodata write format... " + write.name() + "; Maybe it will be added in future!");
+                    return;
+                }
+                System.err.println("Writing... " + file.getName() + ";");
+                writeClass.write();
             }
-            System.err.println("Writing... " + file.getName() + ";");
-            writeClass.write();
         }
     }
 

@@ -4,6 +4,7 @@ import org.index.config.IConfig;
 import org.index.config.annotations.ConfigParameter;
 import org.index.config.parsers.MainConfigParser;
 import org.index.enums.GeodataExtensions;
+import org.index.utils.ParseUtils;
 
 import java.io.File;
 
@@ -27,7 +28,7 @@ public class MainConfig implements IConfig
     public static int HEIGHT_MAX_VALUE =  16376;
 
     public static GeodataExtensions PARSE_FORMAT = null;
-    public static GeodataExtensions WRITE_FORMAT = null;
+    public static GeodataExtensions[] WRITE_FORMAT = null;
 
     @ConfigParameter(ignoredParameter = true)
     public static File PATH_TO_RUNNING = null;
@@ -47,6 +48,20 @@ public class MainConfig implements IConfig
             PATH_TO_RUNNING = null;
         }
         PARSE_FORMAT = GeodataExtensions.valueOf(MainConfigParser.getInstance().getParsedData().getString("READ_FORMAT", null).toUpperCase());
-        WRITE_FORMAT = GeodataExtensions.valueOf(MainConfigParser.getInstance().getParsedData().getString("SAVE_FORMAT", null).toUpperCase());
+        {
+            String[] split = MainConfigParser.getInstance().getParsedData().getString("SAVE_FORMAT", "").toUpperCase().split(";");
+            if ((split.length >= 1 && !split[0].isEmpty() && !split[0].isBlank()))
+            {
+                WRITE_FORMAT = new GeodataExtensions[split.length];
+                for (int index = 0; index < split.length; index++)
+                {
+                    if (split[index].isEmpty() || split[index].isBlank())
+                    {
+                        continue;
+                    }
+                    WRITE_FORMAT[index] = GeodataExtensions.valueOf(split[index]);
+                }
+            }
+        }
     }
 }

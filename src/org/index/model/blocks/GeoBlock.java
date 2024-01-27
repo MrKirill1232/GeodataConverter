@@ -31,8 +31,10 @@ public abstract class GeoBlock
     public void extendLayers(int x, int y, int layers)
     {
         _cells[x][y] = new GeoMainCell[layers];
-        if (!_blockType.equals(GeodataBlockTypes.FLAT))
+        if (_blockType != null && !_blockType.equals(GeodataBlockTypes.FLAT))
+        {
             _region.addCellCount(layers);
+        }
     }
 
     public void extendCells(int maxX, int maxY)

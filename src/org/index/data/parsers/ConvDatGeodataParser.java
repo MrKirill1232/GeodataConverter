@@ -1,6 +1,8 @@
 package org.index.data.parsers;
 
 import org.index.config.configs.MainConfig;
+import org.index.config.parsers.MainConfigParser;
+import org.index.data.writers.ConvDatGeodataWriter;
 import org.index.enums.GeodataBlockTypes;
 import org.index.enums.GeodataExtensions;
 import org.index.model.GeoRegion;
@@ -113,7 +115,7 @@ public class ConvDatGeodataParser extends AbstractGeodataParser
     }
 
     @Override
-    protected GeoBlock readFlatData(GeoRegion geoRegion)
+    protected GeoBlock readFlatData(GeoRegion geoRegion, int... args)
     {
         short higherHeight = getBuffer(getFileAsByteArray(), Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();
         short lowestHeight = getBuffer(getFileAsByteArray(), Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();
@@ -130,7 +132,7 @@ public class ConvDatGeodataParser extends AbstractGeodataParser
     }
 
     @Override
-    protected GeoBlock readComplexData(GeoRegion geoRegion)
+    protected GeoBlock readComplexData(GeoRegion geoRegion, int... args)
     {
         final GeoBlockComplex block = new GeoBlockComplex(geoRegion);
         block.extendCells(8, 8);
@@ -153,7 +155,7 @@ public class ConvDatGeodataParser extends AbstractGeodataParser
     }
 
     @Override
-    protected GeoBlock readMultilevelData(GeoRegion geoRegion)
+    protected GeoBlock readMultilevelData(GeoRegion geoRegion, int... args)
     {
         // 65 = 258 elements
         // 127 = 382 elements
@@ -198,5 +200,30 @@ public class ConvDatGeodataParser extends AbstractGeodataParser
                             }
                        )
                 : _xycords;
+    }
+
+    public static void main(String[] args)
+    {
+        MainConfigParser.getInstance().load();
+        File pathToHere;
+        try
+        {
+            pathToHere = new File("").getCanonicalFile();
+        }
+        catch (Exception e)
+        {
+            pathToHere = null;
+        }
+
+        ConvDatGeodataParser data;
+        data = pathToHere == null
+                ? new ConvDatGeodataParser(new File("work/path_txt/25_15_conv.dat"))
+//                : new ConvDatGeodataParser(new File(pathToHere, "work/path_txt/25_15_conv.dat"));
+                : new ConvDatGeodataParser(new File("C:\\Users\\Sader\\Desktop\\25_15_conv.dat"));
+
+        GeoRegion region = data.read();
+
+        ConvDatGeodataWriter writer = new ConvDatGeodataWriter(region, new File("E:\\MrKirill1232\\CodeProjects\\GeodataConverter\\work\\25_15_re_conv.dat"));
+        writer.write();
     }
 }

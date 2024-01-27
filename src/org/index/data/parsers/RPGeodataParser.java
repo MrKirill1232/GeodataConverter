@@ -2,7 +2,6 @@ package org.index.data.parsers;
 
 import org.index.config.ConfigParser;
 import org.index.config.configs.MainConfig;
-import org.index.config.parsers.MainConfigParser;
 import org.index.enums.GeodataBlockTypes;
 import org.index.enums.GeodataExtensions;
 import org.index.model.GeoMainCell;
@@ -78,7 +77,7 @@ public class RPGeodataParser extends AbstractGeodataParser
     }
 
     @Override
-    protected GeoBlock readFlatData(GeoRegion geoRegion)
+    protected GeoBlock readFlatData(GeoRegion geoRegion, int... args)
     {
         short height = getBuffer(getFileAsByteArray(), Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();
 
@@ -93,7 +92,7 @@ public class RPGeodataParser extends AbstractGeodataParser
     }
 
     @Override
-    protected GeoBlock readComplexData(GeoRegion geoRegion)
+    protected GeoBlock readComplexData(GeoRegion geoRegion, int... args)
     {
         final GeoBlockComplex block = new GeoBlockComplex(geoRegion);
         block.extendCells(8, 8);
@@ -116,7 +115,7 @@ public class RPGeodataParser extends AbstractGeodataParser
     }
 
     @Override
-    protected GeoBlock readMultilevelData(GeoRegion geoRegion)
+    protected GeoBlock readMultilevelData(GeoRegion geoRegion, int... args)
     {
         int start = _pos.get();
         final GeoBlockMultiLevel block = new GeoBlockMultiLevel(geoRegion);

@@ -109,7 +109,7 @@ public class L2SGeodataParser extends AbstractGeodataParser
     }
 
     @Override
-    protected GeoBlock readFlatData(GeoRegion geoRegion)
+    protected GeoBlock readFlatData(GeoRegion geoRegion, int... args)
     {
         short height = getBuffer(getFileAsByteArray(), Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();
         final GeoBlockFlat block = new GeoBlockFlat(geoRegion);
@@ -123,7 +123,7 @@ public class L2SGeodataParser extends AbstractGeodataParser
     }
 
     @Override
-    protected GeoBlock readComplexData(GeoRegion geoRegion)
+    protected GeoBlock readComplexData(GeoRegion geoRegion, int... args)
     {
         final GeoBlockComplex block = new GeoBlockComplex(geoRegion);
         block.extendCells(8, 8);
@@ -146,7 +146,7 @@ public class L2SGeodataParser extends AbstractGeodataParser
     }
 
     @Override
-    protected GeoBlock readMultilevelData(GeoRegion geoRegion)
+    protected GeoBlock readMultilevelData(GeoRegion geoRegion, int... args)
     {
         int start = _pos.get();
         final GeoBlockMultiLevel block = new GeoBlockMultiLevel(geoRegion);

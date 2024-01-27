@@ -3,7 +3,7 @@ package org.index;
 import org.index.config.configs.MainConfig;
 import org.index.config.parsers.MainConfigParser;
 import org.index.data.parsers.AbstractGeodataParser;
-import org.index.data.parsers.L2DGeodataParser;
+import org.index.data.parsers.ConvDatGeodataParser;
 import org.index.data.writers.AbstractGeodataWriter;
 import org.index.enums.GeodataExtensions;
 import org.index.model.GeoRegion;
@@ -102,25 +102,6 @@ public class GeodataConverter
     public static void main(String[] args)
     {
         MainConfigParser.getInstance().load();
-        if (true)
-        {
-            new GeodataConverter();
-        }
-        else
-        {
-            AbstractGeodataParser dataOriginal = new L2DGeodataParser(new File(MainConfig.PATH_TO_RUNNING, "work\\conv_dat\\" +"22_20.l2d"));
-            // GeoRegion original = dataOriginal.read();
-            AbstractGeodataParser dataReParsed = new L2DGeodataParser(new File(MainConfig.PATH_TO_RUNNING, "22_20.l2d"));
-            // GeoRegion reparsed = dataReParsed.read();
-
-            for (int index = 0; index < dataOriginal.getFileAsByteArray().length; index++)
-            {
-                if (dataOriginal.getFileAsByteArray()[index] != dataReParsed.getFileAsByteArray()[index])
-                {
-                    System.err.println(index + " not match!" + "\n" + "original: " + dataOriginal.getFileAsByteArray()[index] + "\n" + "reparsed: " + dataReParsed.getFileAsByteArray()[index]);
-                    break;
-                }
-            }
-        }
+        new GeodataConverter();
     }
 }

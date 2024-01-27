@@ -51,6 +51,14 @@ public abstract class AbstractGeodataParser
             {
                 return new L2MGeodataParser(pathToFile);
             }
+            case RP:
+            {
+                return new RPGeodataParser(pathToFile);
+            }
+            case PATCH_TXT:
+            {
+                return new PatchTxtGeodataParser(pathToFile);
+            }
             default:
             {
                 return null;
@@ -117,11 +125,11 @@ public abstract class AbstractGeodataParser
 
     protected abstract void readBlocks(GeoRegion geoRegion);
 
-    protected abstract GeoBlock readFlatData(GeoRegion geoRegion);
+    protected abstract GeoBlock readFlatData(GeoRegion geoRegion, int... args);
 
-    protected abstract GeoBlock readComplexData(GeoRegion geoRegion);
+    protected abstract GeoBlock readComplexData(GeoRegion geoRegion, int... args);
 
-    protected abstract GeoBlock readMultilevelData(GeoRegion geoRegion);
+    protected abstract GeoBlock readMultilevelData(GeoRegion geoRegion, int... args);
 
     public GeodataExtensions getSelectedType()
     {

@@ -72,7 +72,7 @@ public class ConvDatGeodataWriter extends AbstractGeodataWriter
     {
         NetworkWriter writer = new NetworkWriter();
         writer.reverseBytes(true);
-        writer.writeShort((short) block.getBlockType().getConvDatType());
+        writer.writeShort((short) GeodataBlockTypes.FLAT.getConvDatType());
         final GeoMainCell cell = block.getCells()[0][0][0];
         writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getHeight(), cell.getNswe()));
         writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getHeight(), cell.getNswe()));
@@ -84,7 +84,7 @@ public class ConvDatGeodataWriter extends AbstractGeodataWriter
     {
         NetworkWriter writer = new NetworkWriter();
         writer.reverseBytes(true);
-        writer.writeShort(block.getBlockType().getConvDatType());
+        writer.writeShort((short) GeodataBlockTypes.COMPLEX.getConvDatType());
         for (int x = 0; x < 8; x++)
         {
             for (int y = 0; y < 8; y++)
@@ -102,7 +102,22 @@ public class ConvDatGeodataWriter extends AbstractGeodataWriter
         NetworkWriter writer = new NetworkWriter();
         writer.reverseBytes(true);
 
-        writer.writeShort(block.getConvDatType());
+        short layersCount = 0;
+        if (false)  // pandas wrong calculation
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                for (int y = 0; y < 8; y++)
+                {
+                    layersCount += (short) block.getCells()[x][y].length;
+                }
+            }
+            writer.writeShort(layersCount);
+        }
+        else
+        {
+            writer.writeShort((short) block.getConvDatType());
+        }
 
         for (int x = 0; x < 8; x++)
         {

@@ -28,8 +28,8 @@ public class GeoRegion
     public void addBlock(int blockX, int blockY, GeoBlock block)
     {
         _registeredBlocks[blockX][blockY] = block;
-        _flatBlocks += block.getBlockType().equals(GeodataBlockTypes.FLAT) ? 1 : 0;
-        _flatUndComplexBlocks += block.getBlockType().equals(GeodataBlockTypes.MULTILEVEL) ? 0 : 1;
+        _flatBlocks += GeodataBlockTypes.FLAT.equals(block.getBlockType()) ? 1 : 0;
+        _flatUndComplexBlocks += GeodataBlockTypes.MULTILEVEL.equals(block.getBlockType()) ? 0 : 1;
     }
 
     public void addCellCount(int cellCount)
@@ -60,6 +60,11 @@ public class GeoRegion
     public int getFlatUndComplexBlocks()
     {
         return _flatUndComplexBlocks;
+    }
+
+    public void setCellCount(int cellCount)
+    {
+        _cellCount = cellCount;
     }
 
     public int getCellCount()

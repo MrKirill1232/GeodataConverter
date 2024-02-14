@@ -3,6 +3,7 @@ package org.index.data.parsers;
 import org.index.config.ConfigParser;
 import org.index.config.configs.MainConfig;
 import org.index.enums.GeodataBlockTypes;
+import org.index.enums.GeodataCellDirectionFlag;
 import org.index.enums.GeodataExtensions;
 import org.index.model.GeoRegion;
 import org.index.model.blocks.GeoBlock;
@@ -83,8 +84,8 @@ public class L2DGeodataParser extends AbstractGeodataParser
         final GeoBlockFlat block = new GeoBlockFlat(geoRegion);
 
         final GeoMainCell cell = new GeoMainCell(block, 0, 0, 1);
-        cell.setHeight(GeoMainCell.decodeHeight(height));
-        cell.setNswe(GeoMainCell.decodeNswe(height));
+        cell.setHeight(height);
+        cell.setNswe(GeodataCellDirectionFlag.NSWE_ALL.getMask());
 
         block.addCell(cell);
         return block;

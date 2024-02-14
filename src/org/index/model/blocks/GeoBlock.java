@@ -78,5 +78,10 @@ public abstract class GeoBlock
         return _y;
     }
 
-    public abstract int getL2DNswe(int height);
+    public GeoRegion getRegion()
+    {
+        return _region;
+    }
+
+    public abstract GeoMainCell getCellForL2D(int height, int cellX, int cellY);
 }

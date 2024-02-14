@@ -17,9 +17,7 @@ public class GeoMainCell
     private final int _layer;
     private short _height;
     private Short _minHeight = null;
-    private short _nswe;
-    private int _encoded;
-    private GeodataCellDirectionFlag _direction;
+    private byte _nswe;
 
     public GeoMainCell(GeoBlock block, int x, int y, int layer)
     {
@@ -43,14 +41,9 @@ public class GeoMainCell
         return _minHeight == null ? _height : _minHeight;
     }
 
-    public void setNswe(short nswe)
+    public void setNswe(int nswe)
     {
-        _nswe = nswe;
-    }
-
-    public void setDirection(GeodataCellDirectionFlag direction)
-    {
-        _direction = direction;
+        _nswe = (byte) nswe;
     }
 
     public int getX()
@@ -68,9 +61,9 @@ public class GeoMainCell
         return _layer;
     }
 
-    public int getHeightMask()
+    public short getHeightMask(short height)
     {
-        return _block == null || GeodataBlockTypes.FLAT.equals(_block.getBlockType()) ? _height | _nswe : encodeNsweAndHeightToMask(_height, _nswe);
+        return _block == null || GeodataBlockTypes.FLAT.equals(_block.getBlockType()) ? height : encodeNsweAndHeightToMask(height, _nswe);
     }
 
     public short getHeight()
@@ -78,7 +71,7 @@ public class GeoMainCell
         return _height;
     }
 
-    public short getNswe()
+    public byte getNswe()
     {
         return _nswe;
     }
@@ -98,7 +91,7 @@ public class GeoMainCell
         {
             return (short) MainConfig.HEIGHT_MAX_VALUE;
         }
-        height &= HEIGHT_MASK;
+        height &= (short) HEIGHT_MASK;
         height >>= 1;
         return height;
     }
@@ -108,7 +101,7 @@ public class GeoMainCell
         return (short) ((short) height & (byte) GeodataCellDirectionFlag.NSWE_MASK);
     }
 
-    public static int encodeNsweAndHeightToMask(short height, short nswe)
+    public static short encodeNsweAndHeightToMask(short height, short nswe)
     {
 //        String binaryHeight = valuesByShort((short) ((height) << 1));
 //        String binaryNswe = Integer.toBinaryString(nswe);

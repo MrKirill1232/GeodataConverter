@@ -2,9 +2,6 @@ package org.index.data.parsers;
 
 import org.index.config.ConfigParser;
 import org.index.config.configs.MainConfig;
-import org.index.config.parsers.MainConfigParser;
-import org.index.data.writers.AbstractGeodataWriter;
-import org.index.data.writers.ConvDatGeodataWriter;
 import org.index.enums.GeodataBlockTypes;
 import org.index.enums.GeodataCellDirectionFlag;
 import org.index.enums.GeodataExtensions;
@@ -365,28 +362,5 @@ public class PatchTxtGeodataParser extends AbstractGeodataParser
             heightAndNSWE[1] = match[1].substring(0, match[1].length() - 1);
         }
         return heightAndNSWE;
-    }
-
-
-    public static void main(String[] args)
-    {
-        MainConfigParser.getInstance().load();
-        File pathToHere;
-        try
-        {
-            pathToHere = new File("").getCanonicalFile();
-        }
-        catch (Exception e)
-        {
-            pathToHere = null;
-        }
-        PatchTxtGeodataParser data;
-        data = pathToHere == null
-                ? new PatchTxtGeodataParser(new File("work/path_txt/20_25_path.txt"))
-                : new PatchTxtGeodataParser(new File(pathToHere, "work/path_txt/20_25_path.txt"));
-
-        GeoRegion region = data.read();
-        AbstractGeodataWriter writer = new ConvDatGeodataWriter(region, new File(pathToHere, "work/" + "20_25" + "_conv.dat"));
-        writer.write();
     }
 }

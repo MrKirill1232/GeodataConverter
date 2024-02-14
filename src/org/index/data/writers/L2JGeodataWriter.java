@@ -64,7 +64,7 @@ public class L2JGeodataWriter extends AbstractGeodataWriter
         writer.reverseBytes(true);
         writer.writeByte((byte) block.getBlockType().ordinal());
         final GeoMainCell cell = block.getCells()[0][0][0];
-        writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getHeight(), cell.getNswe()));
+        writer.writeShort(cell.getHeightMask(cell.getHeight()));
         return writer.getWrittenBytes();
     }
 
@@ -79,7 +79,7 @@ public class L2JGeodataWriter extends AbstractGeodataWriter
             for (int y = 0; y < 8; y++)
             {
                 final GeoMainCell cell = block.getCells()[x][y][0];
-                writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getHeight(), cell.getNswe()));
+                writer.writeShort(cell.getHeightMask(cell.getHeight()));
             }
         }
         return writer.getWrittenBytes();
@@ -102,7 +102,7 @@ public class L2JGeodataWriter extends AbstractGeodataWriter
                 for (int layer = 0; layer < layers; layer++)
                 {
                     final GeoMainCell cell = block.getCells()[x][y][layer];
-                    writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getHeight(), cell.getNswe()));
+                    writer.writeShort(cell.getHeightMask(cell.getHeight()));
                 }
             }
         }

@@ -20,8 +20,8 @@ public class GeoBlockRaw extends GeoBlock
     }
 
     @Override
-    public int getL2DNswe(int height)
+    public GeoMainCell getCellForL2D(int height, int cellX, int cellY)
     {
-        return 0;
+        return null;
     }
 }

@@ -21,23 +21,17 @@ public class GeoBlockMultiLevel extends GeoBlock
     }
 
     @Override
-    public int getL2DNswe(int height)
+    public GeoMainCell getCellForL2D(int height, int cellX, int cellY)
     {
-        int localX = ((getX() % 8) * 8);
-        int localY = (getY() % 8);
-        if (localX < 0 || localY < 0 || getCells().length <= localX || getCells()[localX] == null || getCells()[localX].length <= localY || getCells()[localX][localY] == null)
+        GeoMainCell[] cells = _cells[cellX][cellY];
+        for (int layer = (cells.length - 1); layer > 0; layer--)
         {
-            return 0;
-        }
-        int layers = getCells()[localX][localY].length;
-        for (int layer = 0; layer < layers; layer++)
-        {
-            GeoMainCell cell = getCells()[localX][localY][layer];
-            if (cell.getHeight() > height)
+            GeoMainCell cell = cells[layer];
+            if (cell.getHeight() < height)
             {
-                return cell.getNswe();
+                return cell;
             }
         }
-        return 0;
+        return null;
     }
 }

@@ -12,20 +12,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Index
  */
-@Deprecated(forRemoval = true)
 public class L2DGeodataWriter extends AbstractGeodataWriter
 {
-    private final AtomicInteger counter = new AtomicInteger(0);
-    private final static int BUMP_COUNTER = 1406;
-
     public L2DGeodataWriter(GeoRegion geoRegion, File path)
     {
-        // Will update in future, when understand how calculate l2d nswe value.
         super(geoRegion, path);
     }
 
@@ -69,21 +63,9 @@ public class L2DGeodataWriter extends AbstractGeodataWriter
     {
         NetworkWriter writer = new NetworkWriter();
         writer.reverseBytes(true);
-        writer.writeByte((byte) block.getBlockType().getL2dType());
-        if (counter.addAndGet(1) == BUMP_COUNTER)
-        {
-            System.err.println();
-        }
+        writer.writeByte(GeodataBlockTypes.FLAT.getL2dType());
         final GeoMainCell cell = block.getCells()[0][0][0];
-        writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getHeight(), cell.getNswe()));
-        if (counter.addAndGet(1) == BUMP_COUNTER)
-        {
-            System.err.println();
-        }
-        if (counter.addAndGet(1) == BUMP_COUNTER)
-        {
-            System.err.println();
-        }
+        writer.writeShort(cell.getHeight());
         return writer.getWrittenBytes();
     }
 
@@ -92,30 +74,14 @@ public class L2DGeodataWriter extends AbstractGeodataWriter
     {
         NetworkWriter writer = new NetworkWriter();
         writer.reverseBytes(true);
-        writer.writeByte((byte) block.getBlockType().getL2dType());
-        if (counter.addAndGet(1) == BUMP_COUNTER)
-        {
-            System.err.println();
-        }
+        writer.writeByte(GeodataBlockTypes.COMPLEX.getL2dType());
         for (int x = 0; x < 8; x++)
         {
             for (int y = 0; y < 8; y++)
             {
                 final GeoMainCell cell = block.getCells()[x][y][0];
-                writer.writeByte(cell.getNswe());
-                if (counter.addAndGet(1) == BUMP_COUNTER)
-                {
-                    System.err.println();
-                }
+                writer.writeByte(calculateL2DNswe(block, x, y, 0));
                 writer.writeShort(cell.getHeight());
-                if (counter.addAndGet(1) == BUMP_COUNTER)
-                {
-                    System.err.println();
-                }
-                if (counter.addAndGet(1) == BUMP_COUNTER)
-                {
-                    System.err.println();
-                }
             }
         }
         return writer.getWrittenBytes();
@@ -127,59 +93,43 @@ public class L2DGeodataWriter extends AbstractGeodataWriter
         NetworkWriter writer = new NetworkWriter();
         writer.reverseBytes(true);
 
-        writer.writeByte(block.getBlockType().getL2dType());
+        writer.writeByte(GeodataBlockTypes.MULTILEVEL.getL2dType());
 
-        if (counter.addAndGet(1) == BUMP_COUNTER)
-        {
-            System.err.println();
-        }
         for (int x = 0; x < 8; x++)
         {
             for (int y = 0; y < 8; y++)
             {
                 int layers = block.getCells()[x][y].length;
                 writer.writeByte(layers);
-                if (counter.addAndGet(1) == BUMP_COUNTER)
-                {
-                    System.err.println();
-                }
                 for (int layer = 0; layer < layers; layer++)
                 {
                     final GeoMainCell cell = block.getCells()[x][y][layer];
-                    writer.writeByte(cell.getNswe());
-                    if (counter.addAndGet(1) == BUMP_COUNTER)
-                    {
-                        System.err.println();
-                    }
+                    writer.writeByte(calculateL2DNswe(block, x, y, layer));
                     writer.writeShort(cell.getHeight());
-                    if (counter.addAndGet(1) == BUMP_COUNTER)
-                    {
-                        System.err.println();
-                    }
-                    if (counter.addAndGet(1) == BUMP_COUNTER)
-                    {
-                        System.err.println();
-                    }
                 }
             }
         }
         return writer.getWrittenBytes();
     }
 
-    private int getL2dNswe(GeoBlock block, int height, byte nsweValue)
+    private byte calculateL2DNswe(GeoBlock block, int cellX, int cellY, int layer)
     {
-        for (int x = 0; x < 8; )
-        if (block.getBlockType().equals(GeodataBlockTypes.FLAT))
+        if (GeodataBlockTypes.FLAT.equals(block.getBlockType()))
         {
-            return nsweValue;
+            throw new IllegalArgumentException("Flat block not support nswe recalculation!");
         }
-        byte nswe = nsweValue;
-        height = height; // + 48;
+        GeoMainCell lookingCell = block.getCells()[cellX][cellY][layer];
 
-        final byte nsweN = getNsweBelow(block.getX(), block.getY() - 1, height);
-        final byte nsweS = getNsweBelow(block.getX(), block.getY() + 1, height);
-        final byte nsweW = getNsweBelow(block.getX() - 1, block.getY(), height);
-        final byte nsweE = getNsweBelow(block.getX() + 1, block.getY(), height);
+        GeoMainCell upperCell = getUpperCell(block, cellX, cellY, layer);
+        GeoMainCell  downCell = getLowerCell(block, cellX, cellY, layer);
+        GeoMainCell  leftCell = getLeftCell(block, cellX, cellY, layer);
+        GeoMainCell rightCell = getRightCell(block, cellX, cellY, layer);
+
+        byte  nswe       = lookingCell.getNswe();
+        final byte nsweN =  leftCell == null ? -1 :  leftCell.getNswe();
+        final byte nsweS = rightCell == null ? -1 : rightCell.getNswe();
+        final byte nsweW =  downCell == null ? -1 :  downCell.getNswe();
+        final byte nsweE = upperCell == null ? -1 : upperCell.getNswe();
 
         // north-west
         if ((((nswe & GeodataCellDirectionFlag.FLAG_N.getMask()) != 0) && ((nsweN & GeodataCellDirectionFlag.FLAG_W.getMask()) != 0)) || (((nswe & GeodataCellDirectionFlag.FLAG_W.getMask()) != 0) && ((nsweW & GeodataCellDirectionFlag.FLAG_N.getMask()) != 0)))
@@ -208,13 +158,93 @@ public class L2DGeodataWriter extends AbstractGeodataWriter
         return nswe;
     }
 
-    private byte getNsweBelow(int blockX, int blockY, int height)
+    /**
+     * 00  01  02  03  04  05  06  07 <br>
+     * 10  11  12  13  14  15  16  17 <br>
+     * 20  21  22  23  24  25  26  27 <br>
+     * 30  31  32  33  34  35  36  37 <br>
+     * 40  41  42  43  44  45  46  47 <br>
+     * 50  51  52  53  54  55  56  57 <br>
+     * 60  61  62  63  64  65  66  67 <br>
+     * 70  71  72  73  74  75  76  77 <br>
+     */
+    private GeoMainCell getUpperCell(GeoBlock block, int cellX, int cellY, int layer)
     {
-        final GeoBlock[][] getRegionBlocks = getRegion().getBlocks();
-        if (blockX < 0 || blockY < 0 || getRegionBlocks.length <= blockX || getRegionBlocks[blockX] == null || getRegionBlocks[blockX].length <= blockY || getRegionBlocks[blockX][blockY] == null)
+        GeoMainCell lookingCell = block.getCells()[cellX][cellY][layer];
+
+        GeoBlock upperBlock;
+        if (block.getX() == 0 && cellX == 0)
         {
-            return 0;
+            return null;
         }
-        return (byte) getRegion().getBlocks()[blockX][blockY].getL2DNswe(height);
+        else if (cellX == 0)
+        {
+            upperBlock = block.getRegion().getBlocks()[block.getX() - 1][block.getY()];
+        }
+        else
+        {
+            upperBlock = block;
+        }
+        return (cellX == 0) ? upperBlock.getCellForL2D(lookingCell.getHeight(), 7, cellY) :  upperBlock.getCellForL2D(lookingCell.getHeight(), cellX - 1, cellY);
+    }
+
+    private GeoMainCell getLowerCell(GeoBlock block, int cellX, int cellY, int layer)
+    {
+        GeoMainCell lookingCell = block.getCells()[cellX][cellY][layer];
+
+        GeoBlock lowerBlock;
+        if (block.getX() == 255 && cellX == 7)
+        {
+            return null;
+        }
+        else if (cellX == 7)
+        {
+            lowerBlock = block.getRegion().getBlocks()[block.getX() + 1][block.getY()];
+        }
+        else
+        {
+            lowerBlock = block;
+        }
+        return (cellX == 0) ? lowerBlock.getCellForL2D(lookingCell.getHeight(), 0, cellY) :  lowerBlock.getCellForL2D(lookingCell.getHeight(), cellX + 1, cellY);
+    }
+
+    private GeoMainCell getLeftCell(GeoBlock block, int cellX, int cellY, int layer)
+    {
+        GeoMainCell lookingCell = block.getCells()[cellX][cellY][layer];
+
+        GeoBlock leftBlock;
+        if (block.getY() == 0 && cellY == 0)
+        {
+            return null;
+        }
+        else if (cellY == 0)
+        {
+            leftBlock = block.getRegion().getBlocks()[block.getX()][block.getY() - 1];
+        }
+        else
+        {
+            leftBlock = block;
+        }
+        return (cellY == 0) ? leftBlock.getCellForL2D(lookingCell.getHeight(), cellX, 7) :  leftBlock.getCellForL2D(lookingCell.getHeight(), cellX, cellY - 1);
+    }
+
+    private GeoMainCell getRightCell(GeoBlock block, int cellX, int cellY, int layer)
+    {
+        GeoMainCell lookingCell = block.getCells()[cellX][cellY][layer];
+
+        GeoBlock rightBlock;
+        if (block.getY() == 0 && cellY == 0)
+        {
+            return null;
+        }
+        else if (cellY == 7)
+        {
+            rightBlock = block.getRegion().getBlocks()[block.getX()][block.getY() + 1];
+        }
+        else
+        {
+            rightBlock = block;
+        }
+        return (cellY == 0) ? rightBlock.getCellForL2D(lookingCell.getHeight(), cellX, 0) :  rightBlock.getCellForL2D(lookingCell.getHeight(), cellX, cellY + 1);
     }
 }

@@ -23,8 +23,8 @@ public class GeoBlockFlat extends GeoBlock
     }
 
     @Override
-    public int getL2DNswe(int height)
+    public GeoMainCell getCellForL2D(int height, int cellX, int cellY)
     {
-        return _cells[0][0][0].getHeight() < height ? _cells[0][0][0].getNswe() : 0;
+        return _cells[0][0][0];
     }
 }

@@ -21,15 +21,8 @@ public class GeoBlockComplex extends GeoBlock
     }
 
     @Override
-    public int getL2DNswe(int height)
+    public GeoMainCell getCellForL2D(int height, int cellX, int cellY)
     {
-        int localX = ((getX() % 8) * 8);
-        int localY = (getY() % 8);
-        if (localX < 0 || localY < 0 || getCells().length <= localX || getCells()[localX] == null || getCells()[localX].length <= localY || getCells()[localX][localY] == null)
-        {
-            return 0;
-        }
-        GeoMainCell cell = getCells()[localX][localY][0];
-        return (byte) (cell.getHeight() < height ? cell.getNswe() : 0);
+        return _cells[cellX][cellY][0];
     }
 }

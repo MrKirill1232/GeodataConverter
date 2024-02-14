@@ -30,6 +30,10 @@ public abstract class AbstractGeodataWriter
             {
                 return new L2GGeodataWriter(region, pathToFile);
             }
+            case L2D:
+            {
+                return new L2DGeodataWriter(region, pathToFile);
+            }
             default:
             {
                 return null;

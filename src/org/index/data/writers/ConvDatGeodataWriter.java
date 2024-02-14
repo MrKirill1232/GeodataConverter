@@ -74,10 +74,8 @@ public class ConvDatGeodataWriter extends AbstractGeodataWriter
         writer.reverseBytes(true);
         writer.writeShort((short) GeodataBlockTypes.FLAT.getConvDatType());
         final GeoMainCell cell = block.getCells()[0][0][0];
-//        writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getHeight(), cell.getNswe()));
-//        writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getMinHeight(), cell.getNswe()));
-        writer.writeShort(cell.getHeight() | cell.getNswe());
-        writer.writeShort(cell.getMinHeight() | cell.getNswe());
+        writer.writeShort(cell.getHeightMask(cell.getHeight()));
+        writer.writeShort(cell.getHeightMask(cell.getMinHeight()));
         return writer.getWrittenBytes();
     }
 
@@ -92,7 +90,7 @@ public class ConvDatGeodataWriter extends AbstractGeodataWriter
             for (int y = 0; y < 8; y++)
             {
                 final GeoMainCell cell = block.getCells()[x][y][0];
-                writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getHeight(), cell.getNswe()));
+                writer.writeShort(cell.getHeightMask(cell.getHeight()));
             }
         }
         return writer.getWrittenBytes();
@@ -130,7 +128,7 @@ public class ConvDatGeodataWriter extends AbstractGeodataWriter
                 for (int layer = 0; layer < layers; layer++)
                 {
                     final GeoMainCell cell = block.getCells()[x][y][layer];
-                    writer.writeShort(GeoMainCell.encodeNsweAndHeightToMask(cell.getHeight(), cell.getNswe()));
+                    writer.writeShort(cell.getHeightMask(cell.getHeight()));
                 }
             }
         }

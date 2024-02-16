@@ -205,7 +205,7 @@ public class L2DGeodataWriter extends AbstractGeodataWriter
         {
             lowerBlock = block;
         }
-        return (cellX == 0) ? lowerBlock.getCellForL2D(lookingCell.getHeight(), 0, cellY) :  lowerBlock.getCellForL2D(lookingCell.getHeight(), cellX + 1, cellY);
+        return (cellX == 7) ? lowerBlock.getCellForL2D(lookingCell.getHeight(), 0, cellY) :  lowerBlock.getCellForL2D(lookingCell.getHeight(), cellX + 1, cellY);
     }
 
     private GeoMainCell getLeftCell(GeoBlock block, int cellX, int cellY, int layer)
@@ -233,7 +233,7 @@ public class L2DGeodataWriter extends AbstractGeodataWriter
         GeoMainCell lookingCell = block.getCells()[cellX][cellY][layer];
 
         GeoBlock rightBlock;
-        if (block.getY() == 0 && cellY == 0)
+        if (block.getY() == 255 && cellY == 7)
         {
             return null;
         }
@@ -245,6 +245,6 @@ public class L2DGeodataWriter extends AbstractGeodataWriter
         {
             rightBlock = block;
         }
-        return (cellY == 0) ? rightBlock.getCellForL2D(lookingCell.getHeight(), cellX, 0) :  rightBlock.getCellForL2D(lookingCell.getHeight(), cellX, cellY + 1);
+        return (cellY == 7) ? rightBlock.getCellForL2D(lookingCell.getHeight(), cellX, 0) :  rightBlock.getCellForL2D(lookingCell.getHeight(), cellX, cellY + 1);
     }
 }

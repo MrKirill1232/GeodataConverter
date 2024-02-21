@@ -6,24 +6,10 @@ import org.index.utils.StatSet;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -109,7 +95,7 @@ public abstract class ConfigParser
             {
                 System.err.println(getClass().getSimpleName() + ": " + getConfigPath() + "Rewriting value " + key + ";");
             }
-            statSet.set(key, properties.getOrDefault(key, null));
+            statSet.addValue(key, properties.getOrDefault(key, null));
         }
     }
 
@@ -135,7 +121,7 @@ public abstract class ConfigParser
                     originalAccessable = null;
                     continue;
                 }
-                originalAccessable = field.canAccess(null);
+                originalAccessable = field.isAccessible();
                 field.setAccessible(true);
 
                 if (annotation.setParameterMethod().isEmpty())
@@ -201,7 +187,7 @@ public abstract class ConfigParser
             System.err.println(getAttachedConfig().getSimpleName() + ": " + "Requested method " + annotationOfVariable.setParameterMethod() + " not exist in config file!");
             return;
         }
-        Boolean originalAccessable = Modifier.isStatic(variable.getModifiers()) ? requestedMethod.canAccess(null) : requestedMethod.canAccess(instanceOfRequestedConfig);
+        Boolean originalAccessable = Modifier.isStatic(variable.getModifiers()) ? requestedMethod.isAccessible() : requestedMethod.isAccessible();
         try
         {
             if (!Modifier.isStatic(variable.getModifiers()) && Modifier.isPrivate(variable.getModifiers()))
@@ -246,8 +232,8 @@ public abstract class ConfigParser
         final boolean canBeNull = annotationOfVariable.canBeNull();
         final Object valueInParams = variable.getType().isArray() ? getArrayObject(parameters.getString(annotationOfVariable.parameterName(), null), annotationOfVariable.spliterator(), variable.getName(), variable.getType().getComponentType(), getDefaultValueOfField(variable), mod, minValue, maxValue, canBeNull) :
                 Collection.class.isAssignableFrom(variable.getType())
-                ? getListObject(parameters.getString(annotationOfVariable.parameterName(), null), annotationOfVariable.spliterator(), variable, getDefaultValueOfField(variable), mod, minValue, maxValue, canBeNull)
-                : getFineObject(parameters.getString(annotationOfVariable.parameterName(), null), variable.getName(), variable.getType(), getDefaultValueOfField(variable), mod, minValue, maxValue, canBeNull);
+                        ? getListObject(parameters.getString(annotationOfVariable.parameterName(), null), annotationOfVariable.spliterator(), variable, getDefaultValueOfField(variable), mod, minValue, maxValue, canBeNull)
+                        : getFineObject(parameters.getString(annotationOfVariable.parameterName(), null), variable.getName(), variable.getType(), getDefaultValueOfField(variable), mod, minValue, maxValue, canBeNull);
         if (!canBeNull && valueInParams == null)
         {
             System.err.println(getClass().getSimpleName() + ": " + "Null value for " + variable.getName() + ";");
@@ -305,7 +291,7 @@ public abstract class ConfigParser
             }
             for (String value : paramValue.replaceAll("\\s+", "").split(splitter))
             {
-                if (value == null || value.isEmpty() || value.isBlank())
+                if (value == null || value.isEmpty())
                 {
                     continue;
                 }

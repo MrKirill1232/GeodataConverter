@@ -31,19 +31,21 @@ public class L2JGeodataWriter extends AbstractGeodataWriter
         {
             for (int blockY = 0; blockY < MainConfig.GEO_REGION_SIZE; blockY++)
             {
+                byte[] blockAsByte = null;
                 GeoBlock block = getRegion().getBlocks()[blockX][blockY];
                 if (block.getBlockType().equals(GeodataBlockTypes.FLAT))
                 {
-                    buffer.writeBytes(storeFlatBlock(block));
+                    blockAsByte = storeFlatBlock(block);
                 }
                 if (block.getBlockType().equals(GeodataBlockTypes.COMPLEX))
                 {
-                    buffer.writeBytes(storeComplexBlock(block));
+                    blockAsByte = storeComplexBlock(block);
                 }
                 if (block.getBlockType().equals(GeodataBlockTypes.MULTILEVEL))
                 {
-                    buffer.writeBytes(storeMultilayerBlock(block));
+                    blockAsByte = storeMultilayerBlock(block);
                 }
+                buffer.write(blockAsByte, 0, blockAsByte.length);
             }
         }
 

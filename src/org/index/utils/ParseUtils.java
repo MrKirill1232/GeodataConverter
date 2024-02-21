@@ -24,17 +24,17 @@ public class ParseUtils
         }
         try
         {
-            if (lookingObject instanceof final String inputString)
+            if (lookingObject instanceof String)
             {
-                return inputString;
+                return (String) lookingObject;
             }
-            else if (lookingObject instanceof final CharSequence inputCharSequence)
+            else if (lookingObject instanceof CharSequence)
             {
-                return inputCharSequence.toString();
+                return ((CharSequence) lookingObject).toString();
             }
-            else if (lookingObject instanceof final StringJoiner inputJoiner)
+            else if (lookingObject instanceof StringJoiner)
             {
-                return inputJoiner.toString();
+                return ((StringJoiner) lookingObject).toString();
             }
             return String.valueOf(lookingObject);
         }
@@ -53,9 +53,9 @@ public class ParseUtils
     {
         try
         {
-            if (lookingObject instanceof final Boolean booleanValue)
+            if (lookingObject instanceof Boolean)
             {
-                return booleanValue.booleanValue();
+                return ((Boolean) lookingObject).booleanValue();
             }
             final String lookingObjectAsString = normilizeString(String.valueOf(lookingObject));
             if (lookingObjectAsString.equals("0"))
@@ -94,17 +94,17 @@ public class ParseUtils
     {
         try
         {
-            if (lookingObject instanceof final Byte byteValue)
+            if (lookingObject instanceof Byte)
             {
-                return byteValue.intValue();
+                return ((Byte) lookingObject).intValue();
             }
-            else if (lookingObject instanceof final Short shortValue)
+            if (lookingObject instanceof Short)
             {
-                return shortValue.intValue();
+                return ((Short) lookingObject).intValue();
             }
-            else if (lookingObject instanceof final Integer integerValue)
+            if (lookingObject instanceof Integer)
             {
-                return integerValue.intValue();
+                return ((Integer) lookingObject).intValue();
             }
             final String lookingObjectAsString = normilizeString(String.valueOf(lookingObject));
             return Integer.parseInt(lookingObjectAsString);
@@ -124,21 +124,21 @@ public class ParseUtils
     {
         try
         {
-            if (lookingObject instanceof final Byte byteValue)
+            if (lookingObject instanceof Byte)
             {
-                return byteValue.longValue();
+                return ((Byte) lookingObject).longValue();
             }
-            else if (lookingObject instanceof final Short shortValue)
+            else if (lookingObject instanceof Short)
             {
-                return shortValue.longValue();
+                return ((Short) lookingObject).longValue();
             }
-            else if (lookingObject instanceof final Integer integerValue)
+            else if (lookingObject instanceof Integer)
             {
-                return integerValue.longValue();
+                return ((Integer) lookingObject).longValue();
             }
-            else if (lookingObject instanceof final Long longValue)
+            else if (lookingObject instanceof Long)
             {
-                return longValue.longValue();
+                return ((Long) lookingObject).longValue();
             }
             final String lookingObjectAsString = normilizeString(String.valueOf(lookingObject));
             return Long.parseLong(lookingObjectAsString);
@@ -158,12 +158,13 @@ public class ParseUtils
     {
         try
         {
-            if (lookingObject instanceof final Float floatValue)
+            if (lookingObject instanceof Float)
             {
-                return floatValue;
+                return ((Float) lookingObject).floatValue();
             }
-            else if (lookingObject instanceof final Double doubleValue)
+            else if (lookingObject instanceof Double)
             {
+                Double doubleValue = ((Double) lookingObject);
                 if (defaultValue > Float.MAX_VALUE)
                 {
                     throw new IllegalArgumentException("Float value required, but found double: " + String.valueOf(lookingObject));
@@ -192,13 +193,13 @@ public class ParseUtils
     {
         try
         {
-            if (lookingObject instanceof final Float floatValue)
+            if (lookingObject instanceof Float)
             {
-                return floatValue;
+                return ((Float) lookingObject).doubleValue();
             }
-            else if (lookingObject instanceof final Double doubleValue)
+            else if (lookingObject instanceof Double)
             {
-                return doubleValue;
+                return ((Double) lookingObject).doubleValue();
             }
             final BigDecimal bigDecimalValue = parseValue(lookingObject, (defaultValue == null ? null : new BigDecimal(defaultValue)));
             return bigDecimalValue.doubleValue();
@@ -213,13 +214,14 @@ public class ParseUtils
     {
         try
         {
-            if (lookingObject instanceof final BigDecimal bigDecimal)
+
+            if (lookingObject instanceof BigDecimal)
             {
-                return bigDecimal;
+                return ((BigDecimal) lookingObject);
             }
-            else if (lookingObject instanceof final BigInteger bigInteger)
+            else if (lookingObject instanceof BigInteger)
             {
-                return new BigDecimal(bigInteger);
+                return new BigDecimal((BigInteger) lookingObject);
             }
             final String lookingObjectAsString = normilizeString(String.valueOf(lookingObject)).replaceAll(",", ".");
             return new BigDecimal(lookingObjectAsString);
@@ -243,12 +245,13 @@ public class ParseUtils
                 }
                 return lookingObjectAsString.replaceAll(";", ",").split(",");
             }
-            if (lookingObject instanceof final String[] inputArray)
+            if (lookingObject instanceof String[])
             {
-                return inputArray;
+                return ((String[]) lookingObject);
             }
-            if (lookingObject instanceof final Object[] inputArray)
+            if (lookingObject instanceof Object[])
             {
+                Object[] inputArray = ((Object[]) lookingObject);
                 final String[] outputArray = new String[inputArray.length];
                 for (int index = 0; index < outputArray.length; index++)
                 {
@@ -256,8 +259,9 @@ public class ParseUtils
                 }
                 return outputArray;
             }
-            if (lookingObject instanceof final Collection<?> inputList)
+            if (lookingObject instanceof Collection<?>)
             {
+                Collection<?> inputList = ((Collection<?>) lookingObject);
                 final String[] outputArray = new String[inputList.size()];
                 int counter = 0;
                 for (Object listElement : inputList)
@@ -327,7 +331,7 @@ public class ParseUtils
 
     public static String normilizeString(String inputString, boolean replaceSpace, boolean toLowerCase)
     {
-        if (inputString == null || inputString.isEmpty() || inputString.isBlank())
+        if (inputString == null || inputString.isEmpty())
         {
             return "";
         }
@@ -340,7 +344,7 @@ public class ParseUtils
                 .replaceAll(replaceSpace ? " " : "", "")
                 .replaceAll("\0", replaceSpace ? "" : " ")   // replace all null values
                 .replaceAll("&nbsp", replaceSpace ? "" : " ")
-                .trim().strip();
+                .trim().trim();
         return toLowerCase
                 ? returnString.toLowerCase(Locale.ROOT)
                 : returnString;

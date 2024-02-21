@@ -36,24 +36,26 @@ public class ConvDatGeodataWriter extends AbstractGeodataWriter
         header.writeInt(getRegion().getCellCount());
         header.writeInt(getRegion().getFlatUndComplexBlocks());
         header.writeInt(getRegion().getFlatBlocks());
-        buffer.writeBytes(header.getWrittenBytes());
+        buffer.write(header.getWrittenBytes(), 0, header.getWrittenBytes().length);
         for (int blockX = 0; blockX < MainConfig.GEO_REGION_SIZE; blockX++)
         {
             for (int blockY = 0; blockY < MainConfig.GEO_REGION_SIZE; blockY++)
             {
+                byte[] blockAsByte = null;
                 GeoBlock block = getRegion().getBlocks()[blockX][blockY];
                 if (block.getBlockType().equals(GeodataBlockTypes.FLAT))
                 {
-                    buffer.writeBytes(storeFlatBlock(block));
+                    blockAsByte = storeFlatBlock(block);
                 }
                 if (block.getBlockType().equals(GeodataBlockTypes.COMPLEX))
                 {
-                    buffer.writeBytes(storeComplexBlock(block));
+                    blockAsByte = storeComplexBlock(block);
                 }
                 if (block.getBlockType().equals(GeodataBlockTypes.MULTILEVEL))
                 {
-                    buffer.writeBytes(storeMultilayerBlock(block));
+                    blockAsByte = storeMultilayerBlock(block);
                 }
+                buffer.write(blockAsByte, 0, blockAsByte.length);
             }
         }
 

@@ -22,12 +22,13 @@ import java.util.Arrays;
 public class L2SGeodataParser extends AbstractGeodataParser
 {
     private final static int CHECKSUMM = 0x814141AB;
-    private final static String IP_ADDRESS = "127.0.0.1";
+    private final String _ipAddress;
     private int _checksumm;
 
-    public L2SGeodataParser(File pathToFile)
+    public L2SGeodataParser(File pathToFile, String ipAddress)
     {
         super(GeodataExtensions.L2S, pathToFile);
+        _ipAddress = ipAddress;
         // first 4 bytes - xor key
         _pos.set(4);
     }
@@ -36,7 +37,7 @@ public class L2SGeodataParser extends AbstractGeodataParser
     public boolean checkGeodataCrypt()
     {
         _checksumm = CHECKSUMM;
-        byte[] addrBytes = IP_ADDRESS.getBytes();
+        byte[] addrBytes = _ipAddress.getBytes();
         for (int addrByteIdx = 0; addrByteIdx < addrBytes.length; ++addrByteIdx)
         {
             _checksumm ^= addrBytes[addrByteIdx];
@@ -77,8 +78,7 @@ public class L2SGeodataParser extends AbstractGeodataParser
                 GeodataBlockTypes geodataBlockType = GeodataBlockTypes.getType(getSelectedType(), type);
                 if (geodataBlockType == null)
                 {
-                    System.err.println(Arrays.toString(getXYcord()) + " unk block type " + type + ";");
-                    continue;
+                    throw new RuntimeException(Arrays.toString(getXYcord()) + " unk block type " + type + ";");
                 }
                 final GeoBlock block;
                 switch (geodataBlockType)

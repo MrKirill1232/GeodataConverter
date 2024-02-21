@@ -6,6 +6,7 @@ import org.index.data.parsers.AbstractGeodataParser;
 import org.index.data.writers.AbstractGeodataWriter;
 import org.index.enums.GeodataExtensions;
 import org.index.model.GeoRegion;
+import org.index.utils.L2ScriptCryptShuffle;
 
 import java.io.File;
 import java.util.Arrays;
@@ -105,6 +106,11 @@ public class GeodataConverter
     public static void main(String[] args)
     {
         MainConfigParser.getInstance().load();
+        if (GeodataExtensions.L2S.equals(MainConfig.PARSE_FORMAT) && MainConfig.SHUFFLE_L2S_CRYPT)
+        {
+            L2ScriptCryptShuffle shuffle = new L2ScriptCryptShuffle(new File(MainConfig.PATH_TO_RUNNING, "work/" + "input"));
+            MainConfig.L2S_BIND_IP_ADDRESS = shuffle.getBindIpAddress();
+        }
         new GeodataConverter();
     }
 }

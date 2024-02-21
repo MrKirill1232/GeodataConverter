@@ -2,11 +2,11 @@
 
 ДА! УТИЛИТА КОНВЕРТИРУЕТ L2D В ФОРМАТ L2J!
 <br>
-**ПОДДЕРЖИВАЕМЫЕ ИМПОРТ ФОРМАТЫ: L2J, L2D, L2M, L2G, _path.txt (pandas style), _conv.dat, RP**
+**ПОДДЕРЖИВАЕМЫЕ ИМПОРТ ФОРМАТЫ: L2J, L2D, L2M, L2G, L2S, _path.txt (pandas style), _conv.dat, RP**
 <br>
 **ПОДДЕРЖИВАЕМЫЕ ЕКСПОРТ ФОРМАТЫ: L2J, L2D, L2G, _conv.dat**
 <br>
-!ТРЕБУЕТСЯ JDK 17!
+!ТРЕБУЕТСЯ JDK ~~17~~ 8 (after version 1.8)!
 
 Для компиляции потребуется Apache Ant или можно скачать из релизов актуальную версию библиотеки.
 Чтоб пользоваться данной утилитой - требуется скачать проект, а так же библиотеку.
@@ -33,11 +33,11 @@ SAVE_FORMAT = l2j - выходной формат после конвертац�
 
 YES! UTILITY CONVERTS L2D TO L2J FORMAT!
 <br>
-**SUPPORTED IMPORT FORMATS: L2J, L2D, L2M, L2G, _path.txt (pandas style), _conv.dat, RP**
+**SUPPORTED IMPORT FORMATS: L2J, L2D, L2M, L2G, L2S, _path.txt (pandas style), _conv.dat, RP**
 <br>
 **SUPPORTED EXPORT FORMATS: L2J, L2D, L2G, _conv.dat**
 <br>
-!REQUIRED JDK-17!
+!REQUIRED JDK ~~17~~ 8 (after version 1.8)!
 
 For compilation, you will need Apache Ant or you can download the current version of the library from releases.
 To use this utility - you need to download the project, as well as the library.

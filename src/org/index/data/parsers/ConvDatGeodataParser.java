@@ -12,7 +12,6 @@ import org.index.model.blocks.GeoBlockMultiLevel;
 import org.index.model.GeoMainCell;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**
@@ -55,9 +54,9 @@ public class ConvDatGeodataParser extends AbstractGeodataParser
     {
         _header = new int[7];
         // int xRegion
-        _header[0] = ByteBuffer.allocate(Byte.BYTES).put(getFileAsByteArray()[_pos.getAndAdd(Byte.BYTES)]).rewind().get();
+        _header[0] = getBuffer(getFileAsByteArray(), Byte.BYTES, _pos.getAndAdd(Byte.BYTES), true).get();
         // int yRegion
-        _header[1] = ByteBuffer.allocate(Byte.BYTES).put(getFileAsByteArray()[_pos.getAndAdd(Byte.BYTES)]).rewind().get();
+        _header[1] = getBuffer(getFileAsByteArray(), Byte.BYTES, _pos.getAndAdd(Byte.BYTES), true).get();
         // int dummy01
         _header[2] = getBuffer(getFileAsByteArray(), Short.BYTES, _pos.getAndAdd(Short.BYTES), true).getShort();   // 128
         // int dummy02
@@ -195,8 +194,8 @@ public class ConvDatGeodataParser extends AbstractGeodataParser
                     : (
                         _xycords = new int[]
                             {
-                                ByteBuffer.allocate(Byte.BYTES).put(getFileAsByteArray()[0]).rewind().get(),
-                                ByteBuffer.allocate(Byte.BYTES).put(getFileAsByteArray()[1]).rewind().get()
+                                    getBuffer(getFileAsByteArray(), Byte.BYTES, getFileAsByteArray()[0], false).get(),
+                                    getBuffer(getFileAsByteArray(), Byte.BYTES, getFileAsByteArray()[1], false).get(),
                             }
                        )
                 : _xycords;

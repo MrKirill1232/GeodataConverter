@@ -41,7 +41,7 @@ public abstract class AbstractGeodataParser
             }
             case L2S:
             {
-                return new L2SGeodataParser(pathToFile);
+                return new L2SGeodataParser(pathToFile, MainConfig.L2S_BIND_IP_ADDRESS);
             }
             case L2G:
             {

@@ -4,7 +4,6 @@ import org.index.config.IConfig;
 import org.index.config.annotations.ConfigParameter;
 import org.index.config.parsers.MainConfigParser;
 import org.index.enums.GeodataExtensions;
-import org.index.utils.ParseUtils;
 
 import java.io.File;
 
@@ -36,6 +35,12 @@ public class MainConfig implements IConfig
     @ConfigParameter(parameterName = "GEO_REGION_SIZE")
     public static int GEO_REGION_SIZE = 256;
 
+    @ConfigParameter(parameterName = "SHUFFLE_L2S_CRYPT")
+    public static boolean SHUFFLE_L2S_CRYPT = false;
+
+    @ConfigParameter(parameterName = "L2S_BIND_IP_ADDRESS")
+    public static String L2S_BIND_IP_ADDRESS = "127.0.0.1";
+
     @Override
     public void onLoad()
     {
@@ -50,12 +55,12 @@ public class MainConfig implements IConfig
         PARSE_FORMAT = GeodataExtensions.valueOf(MainConfigParser.getInstance().getParsedData().getString("READ_FORMAT", null).toUpperCase());
         {
             String[] split = MainConfigParser.getInstance().getParsedData().getString("SAVE_FORMAT", "").toUpperCase().split(";");
-            if ((split.length >= 1 && !split[0].isEmpty() && !split[0].isBlank()))
+            if ((split.length >= 1 && !split[0].isEmpty()))
             {
                 WRITE_FORMAT = new GeodataExtensions[split.length];
                 for (int index = 0; index < split.length; index++)
                 {
-                    if (split[index].isEmpty() || split[index].isBlank())
+                    if (split[index].isEmpty())
                     {
                         continue;
                     }

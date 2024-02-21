@@ -107,9 +107,9 @@ public class PatchTxtGeodataParser extends AbstractGeodataParser
     protected GeoRegion readBlocksToRaw(String[][] array)
     {
         final GeoRegion geoRegion = new GeoRegion(getXYcord()[0], getXYcord()[1]);
-        for (int blockX = 0; blockX < 256; blockX++)
+        for (int blockX = 0; blockX < MainConfig.GEO_REGION_SIZE; blockX++)
         {
-            for (int blockY = 0; blockY < 256; blockY++)
+            for (int blockY = 0; blockY < MainConfig.GEO_REGION_SIZE; blockY++)
             {
                 GeoBlockRaw rawBlock = new GeoBlockRaw(geoRegion);
                 rawBlock.extendCells(8, 8);
@@ -160,9 +160,9 @@ public class PatchTxtGeodataParser extends AbstractGeodataParser
 
     private void normaliseGeoData(GeoRegion newRegion, GeoRegion rawRegion)
     {
-        for (int blockX = 0; blockX < 256; blockX++)
+        for (int blockX = 0; blockX < MainConfig.GEO_REGION_SIZE; blockX++)
         {
-            for (int blockY = 0; blockY < 256; blockY++)
+            for (int blockY = 0; blockY < MainConfig.GEO_REGION_SIZE; blockY++)
             {
                 GeoBlockRaw geoBlockRaw = (GeoBlockRaw) rawRegion.getBlocks()[blockX][blockY];
                 GeodataBlockTypes geodataBlockType = guessBlockType(geoBlockRaw);

@@ -344,7 +344,7 @@ public class ParseUtils
                 .replaceAll(replaceSpace ? " " : "", "")
                 .replaceAll("\0", replaceSpace ? "" : " ")   // replace all null values
                 .replaceAll("&nbsp", replaceSpace ? "" : " ")
-                .trim().trim();
+                .trim();
         return toLowerCase
                 ? returnString.toLowerCase(Locale.ROOT)
                 : returnString;

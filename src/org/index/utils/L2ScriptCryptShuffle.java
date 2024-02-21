@@ -1,5 +1,6 @@
 package org.index.utils;
 
+import org.index.config.configs.MainConfig;
 import org.index.data.parsers.L2SGeodataParser;
 import org.index.enums.GeodataExtensions;
 import org.index.model.GeoRegion;
@@ -86,9 +87,9 @@ public class L2ScriptCryptShuffle
 
     private boolean isContainsNullBlock(GeoRegion region)
     {
-        for (int blockX = 0; blockX < 256; blockX++)
+        for (int blockX = 0; blockX < MainConfig.GEO_REGION_SIZE; blockX++)
         {
-            for (int blockY = 0; blockY < 256; blockY++)
+            for (int blockY = 0; blockY < MainConfig.GEO_REGION_SIZE; blockY++)
             {
                 GeoBlock block = region.getBlocks()[blockX][blockY];
                 if (block == null)

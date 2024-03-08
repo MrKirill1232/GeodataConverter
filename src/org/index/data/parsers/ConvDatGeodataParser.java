@@ -194,8 +194,8 @@ public class ConvDatGeodataParser extends AbstractGeodataParser
                     : (
                         _xycords = new int[]
                             {
-                                    getBuffer(getFileAsByteArray(), Byte.BYTES, getFileAsByteArray()[0], false).get(),
-                                    getBuffer(getFileAsByteArray(), Byte.BYTES, getFileAsByteArray()[1], false).get(),
+                                    getFileAsByteArray()[0],
+                                    getFileAsByteArray()[1]
                             }
                        )
                 : _xycords;

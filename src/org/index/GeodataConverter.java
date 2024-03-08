@@ -51,7 +51,7 @@ public class GeodataConverter
         final String extension = new String(read.getExtension());
         for (File file : files)
         {
-            if (!file.getName().endsWith(extension))
+            if (!file.getName().toLowerCase().endsWith(extension))
             {
                 counter.addAndGet(1);
                 System.err.println("Wrong file format " + file.getName() + "... Continue;");

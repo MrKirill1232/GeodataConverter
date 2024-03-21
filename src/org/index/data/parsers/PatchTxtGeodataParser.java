@@ -227,7 +227,7 @@ public class PatchTxtGeodataParser extends AbstractGeodataParser
                 minHeight = cell.getHeight() < minHeight ? cell.getHeight() : minHeight;
             }
         }
-        if (isAllNswe && (maxHeight == minHeight || Math.abs(maxHeight - minHeight) > (short) 32))
+        if (isAllNswe && (maxHeight == minHeight || Math.abs(maxHeight - minHeight) <= (short) 32))
         {
             geoBlockRaw.getCells()[0][0][0].setHeight(maxHeight);
             geoBlockRaw.getCells()[0][0][0].setMinHeight(minHeight);

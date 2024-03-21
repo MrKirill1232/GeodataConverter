@@ -83,7 +83,10 @@ public class GeoMainCell
 
     public static short decodeHeight(short height)
     {
-        if (height <= MainConfig.HEIGHT_MIN_VALUE)
+        short iHeight = height;
+        iHeight &= (short) HEIGHT_MASK;
+        iHeight >>= 1;
+        if (iHeight <= MainConfig.HEIGHT_MIN_VALUE)
         {
             return (short) MainConfig.HEIGHT_MIN_VALUE;
         }
@@ -91,9 +94,7 @@ public class GeoMainCell
         {
             return (short) MainConfig.HEIGHT_MAX_VALUE;
         }
-        height &= (short) HEIGHT_MASK;
-        height >>= 1;
-        return height;
+        return (short) iHeight;
     }
 
     public static short decodeNswe(int height)

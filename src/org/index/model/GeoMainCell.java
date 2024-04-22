@@ -90,7 +90,7 @@ public class GeoMainCell
         {
             return (short) MainConfig.HEIGHT_MIN_VALUE;
         }
-        if (height >= MainConfig.HEIGHT_MAX_VALUE)
+        if (iHeight >= MainConfig.HEIGHT_MAX_VALUE)
         {
             return (short) MainConfig.HEIGHT_MAX_VALUE;
         }

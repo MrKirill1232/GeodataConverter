@@ -44,6 +44,24 @@ public class MainConfig
     @ConfigParameterVariable(parameterName = "L2S_BIND_IP_ADDRESS")
     public static String L2S_BIND_IP_ADDRESS = "127.0.0.1";
 
+    @ConfigParameterVariable(parameterName = "RUN_OPTIMIZATION")
+    public static boolean RUN_OPTIMIZATION = true;
+
+    @ConfigParameterVariable(parameterName = "HEIGH_DIFF_FOR_OPTIMIZATION")
+    public static int HEIGH_DIFF_FOR_OPTIMIZATION = 16;
+
+    @ConfigParameterVariable(parameterName = "HEIGHT_DIFF_IN_SURROUNDED_BLOCK")
+    public static int HEIGHT_DIFF_IN_SURROUNDED_BLOCK = 16;
+
+    @ConfigParameterVariable(parameterName = "WALL_HEIGH_FOR_OPTIMIZATION")
+    public static int WALL_HEIGH_FOR_OPTIMIZATION = 64;
+
+    @ConfigParameterVariable(parameterName = "CAN_OPTIMIZE_BLOCK_ON_EDGE")
+    public static boolean CAN_OPTIMIZE_BLOCK_ON_EDGE = false;
+
+    @ConfigParameterVariable(parameterName = "LOG_FLAT_BLOCK_ISSUE")
+    public static boolean LOG_FLAT_BLOCK_ISSUE_ON_OPTIMIZATION = false;
+
     public void onStartLoad()
     {
         try

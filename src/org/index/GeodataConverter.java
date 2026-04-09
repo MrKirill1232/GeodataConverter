@@ -9,6 +9,7 @@ import org.index.data.writers.AbstractGeodataWriter;
 import org.index.enums.GeodataExtensions;
 import org.index.model.GeoRegion;
 import org.index.utils.L2ScriptCryptShuffle;
+import org.index.utils.OptimizeRegionImpl;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -82,6 +83,13 @@ public class GeodataConverter
             }
             LOGGER.info(String.format("Reading... '%s'.", file.getName()));
             GeoRegion region = parserClass.read();
+            if (MainConfig.RUN_OPTIMIZATION)
+            {
+                OptimizeRegionImpl optimizeRegion = new OptimizeRegionImpl(region);
+                optimizeRegion.optimizeRegion();
+                LOGGER.info(String.format("Region optimized. Original cell count - '%d', Optimized cell count - '%d'", optimizeRegion.getInputGeoRegion().getCellCount(), optimizeRegion.getOutputGeoRegion().getCellCount()));
+                region = optimizeRegion.getOutputGeoRegion();
+            }
             writeGeoFile(parserClass, region, writes, writePath);
             LOGGER.info(String.format("%d / %S", (int) ((double) counter.addAndGet(1) / (double) validateFileArray.length * 100d), "100%"));
         }

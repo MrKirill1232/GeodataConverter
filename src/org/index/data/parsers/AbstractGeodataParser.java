@@ -1,5 +1,8 @@
 package org.index.data.parsers;
 
+import git.index.fieldparser.FieldParserManager;
+import git.index.fieldparser.interfaces.IFieldParser;
+import git.index.fieldparser.model.FieldClassRef;
 import org.index.config.configs.MainConfig;
 import org.index.enums.GeodataExtensions;
 import org.index.model.GeoRegion;
@@ -25,45 +28,7 @@ public abstract class AbstractGeodataParser
 
     public static AbstractGeodataParser createNewInstance(GeodataExtensions type, File pathToFile)
     {
-        switch (type)
-        {
-            case L2J:
-            {
-                return new L2JGeodataParser(pathToFile);
-            }
-            case CONV_DAT:
-            {
-                return new ConvDatGeodataParser(pathToFile);
-            }
-            case L2D:
-            {
-                return new L2DGeodataParser(pathToFile);
-            }
-            case L2S:
-            {
-                return new L2SGeodataParser(pathToFile, MainConfig.L2S_BIND_IP_ADDRESS);
-            }
-            case L2G:
-            {
-                return new L2GGeodataParser(pathToFile);
-            }
-            case L2M:
-            {
-                return new L2MGeodataParser(pathToFile);
-            }
-            case RP:
-            {
-                return new RPGeodataParser(pathToFile);
-            }
-            case PATH_TXT:
-            {
-                return new PatchTxtGeodataParser(pathToFile);
-            }
-            default:
-            {
-                return null;
-            }
-        }
+        return type.getInstanceOfReader(pathToFile);
     }
 
     public AbstractGeodataParser(GeodataExtensions type, File pathToFile)
@@ -121,7 +86,32 @@ public abstract class AbstractGeodataParser
 
     public abstract GeoRegion read();
 
-    public abstract int[] getXYcord();
+    public int[] getXYcord()
+    {
+        if ((getPathToGeodataFile() == null) || (!getPathToGeodataFile().isFile()))
+        {
+            return new int[2];
+        }
+        String[] splitBySub = getPathToGeodataFile().getName().split("_", 2);
+        if (splitBySub.length != 2)
+        {
+            return new int[2];
+        }
+        if ((splitBySub[0].length() != 2) || (splitBySub[1].length() < 2))
+        {
+            return new int[2];
+        }
+        String value01 = splitBySub[0];
+        String value02 = splitBySub[1].substring(0, 2);
+        IFieldParser<?> integerFieldParser = FieldParserManager.getInstance().getParserByFieldType(Integer.class);
+        Integer xValue = integerFieldParser.parseValue(value01, new FieldClassRef<>(Integer.class), null);
+        Integer yValue = integerFieldParser.parseValue(value02, new FieldClassRef<>(Integer.class), null);
+        if (xValue == null || yValue == null)
+        {
+            return new int[2];
+        }
+        return new int[] { xValue, yValue };
+    }
 
     protected abstract void readBlocks(GeoRegion geoRegion);
 

@@ -1,0 +1,20 @@
+<component name="ArtifactManager">
+  <artifact name="GeodataConverter:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/GeodataConverter_jar</output-path>
+    <root id="root">
+      <element id="directory" name="Build_artifact">
+        <element id="file-copy" path="$PROJECT_DIR$/README.md" />
+        <element id="file-copy" path="$PROJECT_DIR$/start.bat" />
+        <element id="directory" name="libs">
+          <element id="dir-copy" path="$PROJECT_DIR$/libs" />
+          <element id="archive" name="Geodata_Converter_v01.jar">
+            <element id="module-output" name="GeodataConverter" />
+          </element>
+        </element>
+        <element id="directory" name="work">
+          <element id="dir-copy" path="$PROJECT_DIR$/work" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

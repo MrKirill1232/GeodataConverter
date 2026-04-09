@@ -1,6 +1,5 @@
 package org.index.data.parsers;
 
-import org.index.config.ConfigParser;
 import org.index.config.configs.MainConfig;
 import org.index.enums.GeodataBlockTypes;
 import org.index.enums.GeodataCellDirectionFlag;
@@ -24,9 +23,9 @@ public class L2GGeodataParser extends AbstractGeodataParser
     public final static int CHECKSUMM = 0x814141AB;
     private int _checksumm;
 
-    public L2GGeodataParser(File pathToFile)
+    public L2GGeodataParser(GeodataExtensions geodataExtensions, File pathToFile)
     {
-        super(GeodataExtensions.L2G, pathToFile);
+        super(geodataExtensions, pathToFile);
         // first 4 bytes - xor key
         _pos.set(4);
     }
@@ -172,18 +171,7 @@ public class L2GGeodataParser extends AbstractGeodataParser
     {
         if (_xycords == null)
         {
-            if (getPathToGeodataFile() == null || !getPathToGeodataFile().isFile() || !ConfigParser.isDigit(getPathToGeodataFile().getName().split("_")[0]) || !ConfigParser.isDigit(getPathToGeodataFile().getName().split("_")[1].split("\\.")[0]))
-            {
-                _xycords = new int[2];
-            }
-            else
-            {
-                return  _xycords = new int[]
-                        {
-                                Integer.parseInt(getPathToGeodataFile().getName().split("_")[0]),
-                                Integer.parseInt(getPathToGeodataFile().getName().split("_")[1].split("\\.")[0])
-                        };
-            }
+            _xycords = super.getXYcord();
         }
         return _xycords;
     }

@@ -1,6 +1,5 @@
 package org.index.data.parsers;
 
-import org.index.config.ConfigParser;
 import org.index.config.configs.MainConfig;
 import org.index.enums.GeodataBlockTypes;
 import org.index.enums.GeodataCellDirectionFlag;
@@ -25,9 +24,14 @@ public class L2SGeodataParser extends AbstractGeodataParser
     private final String _ipAddress;
     private int _checksumm;
 
-    public L2SGeodataParser(File pathToFile, String ipAddress)
+    public L2SGeodataParser(GeodataExtensions geodataExtensions, File pathToFile)
     {
-        super(GeodataExtensions.L2S, pathToFile);
+        this(geodataExtensions, pathToFile, MainConfig.L2S_BIND_IP_ADDRESS);
+    }
+
+    public L2SGeodataParser(GeodataExtensions geodataExtensions, File pathToFile, String ipAddress)
+    {
+        super(geodataExtensions, pathToFile);
         _ipAddress = ipAddress;
         // first 4 bytes - xor key
         _pos.set(4);
@@ -179,18 +183,7 @@ public class L2SGeodataParser extends AbstractGeodataParser
     {
         if (_xycords == null)
         {
-            if (getPathToGeodataFile() == null || !getPathToGeodataFile().isFile() || !ConfigParser.isDigit(getPathToGeodataFile().getName().split("_")[0]) || !ConfigParser.isDigit(getPathToGeodataFile().getName().split("_")[1].split("\\.")[0]))
-            {
-                _xycords = new int[2];
-            }
-            else
-            {
-                return  _xycords = new int[]
-                        {
-                                Integer.parseInt(getPathToGeodataFile().getName().split("_")[0]),
-                                Integer.parseInt(getPathToGeodataFile().getName().split("_")[1].split("\\.")[0])
-                        };
-            }
+            _xycords = super.getXYcord();
         }
         return _xycords;
     }

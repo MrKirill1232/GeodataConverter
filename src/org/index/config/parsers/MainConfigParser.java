@@ -1,20 +1,13 @@
 package org.index.config.parsers;
 
-import org.index.config.ConfigParser;
+import git.index.configparser.model.AbstractConfigHolder;
 import org.index.config.configs.MainConfig;
 
 /**
  * @author Index
  */
-public class MainConfigParser extends ConfigParser
+public class MainConfigParser extends AbstractConfigHolder<MainConfig>
 {
-    private final static MainConfigParser ACTIVE_INSTANCE = new MainConfigParser();
-
-    public static MainConfigParser getInstance()
-    {
-        return ACTIVE_INSTANCE;
-    }
-
     @Override
     public String getConfigPath()
     {
@@ -22,8 +15,15 @@ public class MainConfigParser extends ConfigParser
     }
 
     @Override
-    public Class<?> getAttachedConfig()
+    public Class<MainConfig> getAttachedConfig()
     {
         return MainConfig.class;
+    }
+
+    private final static MainConfigParser ACTIVE_INSTANCE = new MainConfigParser();
+
+    public static MainConfigParser getInstance()
+    {
+        return ACTIVE_INSTANCE;
     }
 }

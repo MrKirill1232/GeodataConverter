@@ -1,5 +1,6 @@
 package org.index;
 
+import git.index.dummylogger.LoggerImpl;
 import org.index.config.configs.MainConfig;
 import org.index.config.parsers.MainConfigParser;
 import org.index.data.parsers.AbstractGeodataParser;
@@ -17,6 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class GeodataConverter
 {
+    private final static LoggerImpl LOGGER = new LoggerImpl(GeodataConverter.class);
+
     private final AtomicInteger counter = new AtomicInteger(0);
 
     public GeodataConverter()
@@ -25,11 +28,11 @@ public class GeodataConverter
         GeodataExtensions[] writes = MainConfig.WRITE_FORMAT;
         if (read == null || writes == null)
         {
-            System.err.println("Cannot run convertor because writer or reader is null.");
+            LOGGER.error("Cannot run convertor because writer or reader is null.");
             return;
         }
-        System.out.println("Read format - " + read.name() + ";");
-        System.out.println("Write formats - " + Arrays.toString(writes) + ";");
+        LOGGER.info(String.format("Reading format - '%s';", read.name()));
+        LOGGER.info(String.format("Writing format - '%s';", Arrays.toString(writes)));
         final File readPath = new File(MainConfig.PATH_TO_RUNNING, "work/" + "input");
         final File writePath = new File(MainConfig.PATH_TO_RUNNING, "work/" + "output");
         parseGeoFiles(read, readPath, writes, writePath);
@@ -40,43 +43,43 @@ public class GeodataConverter
         final File[] files = readPath.listFiles();
         if (files == null)
         {
-            System.err.println("Cannot run convertor because writer or read files is null");
+            LOGGER.error("Cannot run convertor because writer or reader is null.");
             return;
         }
         if (files.length == 0)
         {
-            System.out.println("Any files for read. Searching path " + readPath.toString() + ";");
+            LOGGER.error(String.format("Any files for read. Searching path '%s'.", readPath));
             return;
         }
-        final String extension = new String(read.getExtension());
+        final String extension = read.getExtension();
         for (File file : files)
         {
             if (!file.getName().toLowerCase().endsWith(extension))
             {
                 counter.addAndGet(1);
-                System.err.println("Wrong file format " + file.getName() + "... Continue;");
+                LOGGER.info(String.format("Wrong file format '%s'... Continue...", file.getName()));
                 continue;
             }
             AbstractGeodataParser parserClass = AbstractGeodataParser.createNewInstance(read, file);
             if (parserClass == null)
             {
-                System.err.println("Unknown error while parsing file " + file + ".");
+                LOGGER.error(String.format("Unknown error while parsing file '%s'.", file));
                 continue;
             }
             if (!parserClass.validGeoFile())
             {
-                System.err.println("Geo file is not correct. " + file + ".");
+                LOGGER.error(String.format("Geo file is not correct '%s'.", file));
                 continue;
             }
             if (!parserClass.checkGeodataCrypt())
             {
-                System.err.println("Geo file is under the crypt. Continue... " + file + ".");
+                LOGGER.error(String.format("Geo file is under the crypt. Continue... '%s'.", file));
                 continue;
             }
-            System.err.println("Reading... " + file.getName() + ";");
+            LOGGER.info(String.format("Reading... '%s'.", file.getName()));
             GeoRegion region = parserClass.read();
             writeGeoFile(region, writes, writePath);
-            System.err.println((int) ((double) counter.addAndGet(1) / (double) files.length * 100d) + "% / " + "100%");
+            LOGGER.info(String.format("%d / %S", (int) ((double) counter.addAndGet(1) / (double) files.length * 100d), "100%"));
         }
     }
 
@@ -90,14 +93,14 @@ public class GeodataConverter
         {
             for (GeodataExtensions write : writes)
             {
-                final File file = new File(writePath, region.getX() + "_" + region.getY() + new String(write.getExtension()));
+                final File file = new File(writePath, region.getX() + "_" + region.getY() + write.getExtension());
                 AbstractGeodataWriter writeClass = AbstractGeodataWriter.createNewInstance(region, write, file);
                 if (writeClass == null)
                 {
-                    System.err.println("You select unsupported geodata write format... " + write.name() + "; Maybe it will be added in future!");
+                    LOGGER.info("You select unsupported geodata write format... " + write.name() + "; Maybe it will be added in future!");
                     return;
                 }
-                System.err.println("Writing... " + file.getName() + ";");
+                LOGGER.info("Writing... " + file.getName() + ";");
                 writeClass.write();
             }
         }

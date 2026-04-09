@@ -25,7 +25,7 @@ public class L2ScriptCryptShuffle
         }
         if (file.isDirectory())
         {
-            String  l2sExtension    = new String(GeodataExtensions.L2S.getExtension());
+            String  l2sExtension    = GeodataExtensions.L2S.getExtension();
             File    minSizeOfFile   = null;
             File[]  files           = file.listFiles();
             if (files != null)
@@ -65,7 +65,7 @@ public class L2ScriptCryptShuffle
                         try
                         {
                             _ipAddress = String.format("%d.%d.%d.%d", index01, index02, index03, index04);
-                            parser = new L2SGeodataParser(_file, _ipAddress);
+                            parser = new L2SGeodataParser(GeodataExtensions.L2S, _file, _ipAddress);
                             parser.checkGeodataCrypt();
                             GeoRegion region = parser.read();
                             if (isContainsNullBlock(region))

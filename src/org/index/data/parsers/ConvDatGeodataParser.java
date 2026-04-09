@@ -21,9 +21,9 @@ public class ConvDatGeodataParser extends AbstractGeodataParser
 {
     private int[] _header = null;
 
-    public ConvDatGeodataParser(File pathToGeoFile)
+    public ConvDatGeodataParser(GeodataExtensions geodataExtensions, File pathToGeoFile)
     {
-        super(GeodataExtensions.CONV_DAT, pathToGeoFile);
+        super(geodataExtensions, pathToGeoFile);
     }
 
     @Override

@@ -13,6 +13,8 @@
         </element>
         <element id="directory" name="work">
           <element id="dir-copy" path="$PROJECT_DIR$/work" />
+          <element id="directory" name="input" />
+          <element id="directory" name="output" />
         </element>
       </element>
     </root>

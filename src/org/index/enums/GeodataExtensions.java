@@ -45,6 +45,16 @@ public enum GeodataExtensions
         return _extension;
     }
 
+    public boolean canCreateInstanceOfReader()
+    {
+        return _readerSupplier != null;
+    }
+
+    public boolean canCreateInstanceOfWriter()
+    {
+        return _writerSupplier != null;
+    }
+
     public AbstractGeodataParser getInstanceOfReader(File pathToFile)
     {
         return _readerSupplier.apply(this, pathToFile);

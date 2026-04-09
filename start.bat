@@ -1,3 +1,3 @@
 @echo off
-java -jar "libs\Geodata_Converter_v01.jar"
+java -jar "libs\Geodata_Converter.jar"
 pause

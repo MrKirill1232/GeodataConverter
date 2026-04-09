@@ -15,11 +15,11 @@ import java.util.regex.Pattern;
 /**
  * @author Index
  */
-public class PatchTxtGeodataParser extends AbstractGeodataParser
+public class PathTxtGeodataParser extends AbstractGeodataParser
 {
     private final static Pattern PATTERN = Pattern.compile("\\[(\\d*),(\\d*)\\](\\d*)|\\(([0-9-:]*)\\)");
 
-    public PatchTxtGeodataParser(GeodataExtensions geodataExtensions, File pathToGeoFile)
+    public PathTxtGeodataParser(GeodataExtensions geodataExtensions, File pathToGeoFile)
     {
         super(geodataExtensions, pathToGeoFile);
     }
@@ -215,8 +215,9 @@ public class PatchTxtGeodataParser extends AbstractGeodataParser
                 minHeight = cell.getHeight() < minHeight ? cell.getHeight() : minHeight;
             }
         }
-        if (isAllNswe && (maxHeight == minHeight || Math.abs(maxHeight - minHeight) <= (short) 32))
-        {
+        if (isAllNswe && (maxHeight == minHeight))
+        {   // лучше 100% знать что блок flat, чем угадывать
+            // для угадывания появился OptimizeRegionImpl
             geoBlockRaw.getCells()[0][0][0].setHeight(maxHeight);
             geoBlockRaw.getCells()[0][0][0].setMinHeight(minHeight);
             return GeodataBlockTypes.FLAT;

@@ -18,7 +18,7 @@ public enum GeodataExtensions
     L2S(        ".l2s"      , L2SGeodataParser      ::new   , null          , false , true  ),
     L2G(        ".l2g"      , L2GGeodataParser      ::new   , L2GGeodataWriter::new     , false , true  ),
     RP(         ".rp"       , L2DGeodataParser      ::new   , null          , false , false ),
-    PATH_TXT(   "_path.txt" , PatchTxtGeodataParser ::new   , null          , false , false ),
+    PATH_TXT(   "_path.txt" , PathTxtGeodataParser::new   , null          , false , false ),
     L2M(        ".l2m"      , L2MGeodataParser      ::new   , null          , false , false ),
     ;
 
